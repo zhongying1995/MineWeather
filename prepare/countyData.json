@@ -1,0 +1,34 @@
+http://guolin.tech/api/china/9/23
+	-获得省份Id为9，城市Id为23的Json数据
+[
+  {
+    "id": 186,
+    "name": "吉林",
+    "weather_id": "CN101060201"
+  },
+  {
+    "id": 187,
+    "name": "舒兰",
+    "weather_id": "CN101060202"
+  },
+  {
+    "id": 188,
+    "name": "永吉",
+    "weather_id": "CN101060203"
+  },
+  {
+    "id": 189,
+    "name": "蛟河",
+    "weather_id": "CN101060204"
+  },
+  {
+    "id": 190,
+    "name": "磐石",
+    "weather_id": "CN101060205"
+  },
+  {
+    "id": 191,
+    "name": "桦甸",
+    "weather_id": "CN101060206"
+  }
+]
