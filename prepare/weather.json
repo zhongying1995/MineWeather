@@ -1,3 +1,5 @@
+https://free-api.heweather.com/v5/weather?city=yourcity&key=yourkey
+
 {
   "HeWeather5": [
     {
