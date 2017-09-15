@@ -1,4 +1,4 @@
-package com.zhongying.mineweather.view.base;
+package com.zhongying.mineweather.activity.base;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

@@ -1,9 +1,9 @@
-package com.zhongying.mineweather.view;
+package com.zhongying.mineweather.activity;
 
 import android.os.Bundle;
 
 import com.zhongying.mineweather.R;
-import com.zhongying.mineweather.view.base.BaseActivity;
+import com.zhongying.mineweather.activity.base.BaseActivity;
 
 public class MainActivity extends BaseActivity {
 

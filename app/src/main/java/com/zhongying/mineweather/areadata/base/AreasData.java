@@ -22,15 +22,15 @@ public abstract class AreasData {
      *          从本地或者服务器
      * @return 返回所需要的当前级别的数据
      */
-    public final List getDataList(Class<?> clzz,int areaId,String adress,Callback callback){
+    public final List getDataList(Class<?> clzz,String adress,Callback callback){
 
         //尝试从本地获取数据
-        List list = getDataListFromLite(clzz,areaId);
+        List list = getDataListFromLite(clzz);
 
         //先向网络发起请求，请求成功后，解析数据并保存到本地，再从本地获取数据
         if(list == null || list.size()<=0){
             queryFromServer(adress,callback);
-            list = getDataListFromLite(clzz,areaId);
+            list = getDataListFromLite(clzz);
         }
 
         return list!=null?list:null;
@@ -40,7 +40,7 @@ public abstract class AreasData {
      * @function: 从本地获取当前级别的数据
      * @return
      */
-    protected abstract List getDataListFromLite(Class<?> clzz,int areaId);
+    protected abstract List getDataListFromLite(Class<?> clzz);
 
 
     /**
@@ -62,7 +62,7 @@ public abstract class AreasData {
     /**
      * 回调函数
      */
-    abstract class Callback extends HttpCallback{
+    public abstract class Callback extends HttpCallback{
 
         @Override
         public  void onFailure(Call call, IOException e){

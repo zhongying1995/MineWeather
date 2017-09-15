@@ -15,6 +15,5 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/area_title_tv"
         android:layout_alignParentRight="true"
-        android:visibility="gone"
         android:src="@mipmap/back"/>
 </RelativeLayout>

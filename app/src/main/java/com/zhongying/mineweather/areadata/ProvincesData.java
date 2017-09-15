@@ -19,6 +19,37 @@ import java.util.List;
 
 public class ProvincesData extends AreasData {
 
+    protected Callback callback = new Callback() {
+
+
+        @Override
+        public void preCallback() {
+
+        }
+
+        @Override
+        public void postCallback() {
+
+        }
+
+        @Override
+        public void onFailure() {
+
+        }
+
+        @Override
+        public void onSucceed() {
+
+        }
+    };
+
+    /*
+        构造函数
+     */
+    public ProvincesData(){
+
+    }
+
     /**
      * @function: 从本地数据库，获取省级的DataList
      * @param clzz
@@ -39,9 +70,9 @@ public class ProvincesData extends AreasData {
      * @return  true：成功返回
      */
     @Override
-    protected List saveDataIntoLite(String response) {
+    protected boolean saveDataIntoLite(String response) {
         if(response==null || TextUtils.isEmpty(response)){
-            return null;
+            return false;
         }
         try {
             List list = new ArrayList();
@@ -54,10 +85,10 @@ public class ProvincesData extends AreasData {
                 p.save();
                 list.add(p);
             }
-            return list;
+            return true;
         }catch (JSONException e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
 }
