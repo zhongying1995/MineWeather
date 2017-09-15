@@ -25,7 +25,6 @@ public class ResolveArea{
         if(response==null || TextUtils.isEmpty(response)){
             return false;
         }
-
         try {
             JSONArray allProvinces = new JSONArray(response);
             for(int i=0;i<allProvinces.length();i++){

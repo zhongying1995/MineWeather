@@ -15,6 +15,17 @@ public class Province extends DataSupport {
 
     private int provinceId;
 
+    //countryId = 0 表示中国
+    private int countryId;
+
+    public int getCountryId() {
+        return countryId;
+    }
+
+    public void setCountryId(int countryId) {
+        this.countryId = countryId;
+    }
+
     public int getId() {
         return id;
     }
