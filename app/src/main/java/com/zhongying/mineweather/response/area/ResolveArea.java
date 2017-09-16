@@ -77,7 +77,7 @@ public class ResolveArea{
                 JSONObject county = counties.getJSONObject(i);
                 County c = new County();
                 c.setCountyName(county.getString("name"));
-                c.setWeatherId(county.getInt("id"));
+                c.setWeatherId(county.getString("weather_id"));
                 c.setCityId(cityId);
             }
             return true;

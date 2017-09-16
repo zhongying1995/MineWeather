@@ -1,5 +1,7 @@
 package com.zhongying.mineweather.areadata.base;
 
+import android.util.Log;
+
 import com.zhongying.mineweather.okhttp.HttpCallback;
 
 import java.io.IOException;
@@ -13,6 +15,8 @@ import okhttp3.Response;
 
 public abstract class Callback extends HttpCallback{
 
+    private String TAG = "AreaFragment";
+
     private String  mResponseText;
 
     @Override
@@ -25,14 +29,19 @@ public abstract class Callback extends HttpCallback{
         if(response == null){
             onFailure(call);
         }
-        mResponseText = response.body().string();
+        this.mResponseText = response.body().string();
+        Log.i(TAG,mResponseText);
         onSucceed( call, response);
     }
 
     public abstract void onFailure(Call call);
 
-    public String getResopnseText(){
+    public String getResponseText(){
         return mResponseText;
+    }
+
+    public void setResponseTextNull(){
+        this.mResponseText = null;
     }
 
     public abstract void onSucceed(Call call, Response response)throws IOException;

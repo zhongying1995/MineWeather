@@ -1,6 +1,7 @@
 package com.zhongying.mineweather.areadata.base;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.zhongying.mineweather.okhttp.HttpUtil;
 
@@ -14,6 +15,8 @@ import java.util.List;
  */
 
 public abstract class AreasData {
+
+    private String TAG = "AreaFragment";
 
     private Callback callback;
 
@@ -38,13 +41,27 @@ public abstract class AreasData {
         //尝试从本地获取数据
         List list = getDataListFromLite(clzz);
 
+        if(list.size()<=0){
+            Log.i(TAG,"首次  --  从本地获取的List为空");
+        }
         //先向网络发起请求，请求成功后，解析数据并保存到本地，再从本地获取数据
-        if(list == null || list.size()<=0){
+        if( list.size()<=0){
             callback.onPreResponse();
             queryFromServer(adress);
-            saveDataIntoLite(callback.getResopnseText());
+            while (true){
+                if(!TextUtils.isEmpty(callback.getResponseText())){
+                    break;
+                }
+            }
+            Log.w(TAG,"adress:"+adress);
+            Log.w(TAG,"callback.getResponseText():"+callback.getResponseText());
+            saveDataIntoLite(callback.getResponseText());
+
             callback.onPostResponse();
             list = getDataListFromLite(clzz);
+        }
+        if(list.size()<=0){
+            Log.i(TAG,"再次  --  从本地获取的List为空");
         }
 
         return list!=null?list:null;
@@ -67,6 +84,7 @@ public abstract class AreasData {
      * @param address
      */
     private void queryFromServer(String address){
+        callback.setResponseTextNull();
         HttpUtil.requestOkHttpUrl(address,callback);
     }
 

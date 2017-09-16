@@ -115,18 +115,29 @@ public class AreaFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Log.w(TAG,"position:"+position+"\nid:"+id);
         switch (mCurrentLevel){
             case LEVEL_PROVINCE:
                 mCurrentProvince = mProvinceList.get(position);
                 mCurrentProvinceId = mCurrentProvince.getProvinceId();
+
+                Log.w(TAG,"mCurrentProvinceId:"+mCurrentProvinceId);
+
                 String address = mBaseAdress + "/"+mCurrentProvinceId;
+                Log.w(TAG,"address: "+address);
                 notifyDataListToCity(mCurrentProvinceId,address);
                 back_iv.setVisibility(View.VISIBLE);
                 mCurrentLevel = LEVEL_CITY;
                 break;
             case LEVEL_CITY:
-                mCurrentCityId = mCityList.get(position).getCityId();
+                mCurrentCity =  mCityList.get(position);
+                mCurrentCityId = mCurrentCity.getCityId();
+
+                Log.w(TAG,"mCurrentCityId:"+mCurrentCityId);
+
                 String address1 = mBaseAdress +"/"+mCurrentProvinceId+"/"+mCurrentCityId;
+                Log.w(TAG,"address: "+address1);
+
                 notifyDataListToCounty(mCurrentCityId,address1);
                 mCurrentLevel = LEVEL_COUNTY;
                 break;
@@ -160,6 +171,10 @@ public class AreaFragment extends BaseFragment implements AdapterView.OnItemClic
         mProvinceList = getProvinceList();
         for (Province province: mProvinceList) {
             mDataList.add(province.getProvinceName());
+            Log.i(TAG,province.getProvinceName());
+        }
+        if(mDataList.size()<=0){
+            Log.i(TAG,"notifyDataListToProvince() --  size<=0");
         }
         mAdapter.notifyDataSetChanged();
         area_lv.setSelection(0);
@@ -172,6 +187,7 @@ public class AreaFragment extends BaseFragment implements AdapterView.OnItemClic
         mCityList = getCityList(provinceId,address);
         for (City city: mCityList) {
             mDataList.add(city.getCityName());
+            Log.i(TAG,city.getCityName());
         }
         mAdapter.notifyDataSetChanged();
         area_lv.setSelection(0);
@@ -184,6 +200,7 @@ public class AreaFragment extends BaseFragment implements AdapterView.OnItemClic
         mCountyList = getCountyList(cityId,address);
         for(County county:mCountyList){
             mDataList.add(county.getCountyName());
+            Log.i(TAG,county.getCountyName());
         }
         mAdapter.notifyDataSetChanged();
         area_lv.setSelection(0);
@@ -215,7 +232,12 @@ public class AreaFragment extends BaseFragment implements AdapterView.OnItemClic
             });
         }
         mProvinceList = mProvincesData.getDataList(Province.class,mBaseAdress);
-
+        if(mProvincesData == null){
+            Log.i(TAG,"getProvinceList()  --  mProvincesData == null");
+        }
+        if(mProvinceList.size()<=0){
+            Log.i(TAG,"getProvinceList()  --  size<=0");
+        }
         return mProvinceList;
     }
 
@@ -276,6 +298,7 @@ public class AreaFragment extends BaseFragment implements AdapterView.OnItemClic
             });
         }
         mCountiesData.setId(cityId);
+        Log.i(TAG,"getCityList() -- "+cityId);
         mCountyList = mCountiesData.getDataList(County.class,address);
 
         return mCountyList;

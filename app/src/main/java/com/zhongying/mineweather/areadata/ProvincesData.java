@@ -3,14 +3,14 @@ package com.zhongying.mineweather.areadata;
 import android.text.TextUtils;
 
 import com.zhongying.mineweather.areadata.base.AreasData;
-import com.zhongying.mineweather.db.Province;
 import com.zhongying.mineweather.areadata.base.Callback;
+import com.zhongying.mineweather.db.Province;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,7 +59,6 @@ public class ProvincesData extends AreasData {
             return false;
         }
         try {
-            List list = new ArrayList();
             JSONArray allProvinces = new JSONArray(response);
             for(int i=0;i<allProvinces.length();i++){
                 JSONObject province = allProvinces.getJSONObject(i);
@@ -67,7 +66,6 @@ public class ProvincesData extends AreasData {
                 p.setProvinceName(province.getString("name"));
                 p.setProvinceId(province.getInt("id"));
                 p.save();
-                list.add(p);
             }
             return true;
         }catch (JSONException e) {
