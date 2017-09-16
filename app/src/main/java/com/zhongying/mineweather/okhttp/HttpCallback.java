@@ -7,6 +7,7 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 /**
+ * @class: 重构okhttp自带的Callback
  * Created by Administrator on 2017/9/15.
  */
 

@@ -19,35 +19,12 @@ import java.util.List;
 
 public class ProvincesData extends AreasData {
 
-    protected Callback callback = new Callback() {
+    public Callback callback;
 
-
-        @Override
-        public void preCallback() {
-
-        }
-
-        @Override
-        public void postCallback() {
-
-        }
-
-        @Override
-        public void onFailure() {
-
-        }
-
-        @Override
-        public void onSucceed() {
-
-        }
-    };
-
-    /*
-        构造函数
-     */
     public ProvincesData(){
+        this.callback = new ProvincesData.Callback(){
 
+        };
     }
 
     /**
@@ -91,4 +68,28 @@ public class ProvincesData extends AreasData {
             return false;
         }
     }
+
+    public class Callback extends AreasData.Callback{
+
+        @Override
+        public void preCallback() {
+
+        }
+
+        @Override
+        public void postCallback() {
+
+        }
+
+        @Override
+        public void onFailure() {
+
+        }
+
+        @Override
+        public void onSucceed() {
+
+        }
+    }
+
 }

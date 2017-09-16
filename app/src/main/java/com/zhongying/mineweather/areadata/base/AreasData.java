@@ -1,5 +1,7 @@
 package com.zhongying.mineweather.areadata.base;
 
+import android.text.TextUtils;
+
 import com.zhongying.mineweather.okhttp.HttpCallback;
 import com.zhongying.mineweather.okhttp.HttpUtil;
 
@@ -10,12 +12,12 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 /**
+ * @class: 控制所有地区级别行为的父类
  * Created by Administrator on 2017/9/15.
  */
 
 public abstract class AreasData {
 
-    public Callback mCallback ;
 
     /**
      * @function: 用固定的流程来控制返回当前级别的数据
@@ -23,7 +25,9 @@ public abstract class AreasData {
      * @return 返回所需要的当前级别的数据
      */
     public final List getDataList(Class<?> clzz,String adress,Callback callback){
-
+        if(clzz==null||adress==null|| TextUtils.isEmpty(adress)||callback==null){
+            return null;
+        }
         //尝试从本地获取数据
         List list = getDataListFromLite(clzz);
 
@@ -62,7 +66,7 @@ public abstract class AreasData {
     /**
      * 回调函数
      */
-    public abstract class Callback extends HttpCallback{
+    protected abstract class Callback extends HttpCallback{
 
         @Override
         public  void onFailure(Call call, IOException e){

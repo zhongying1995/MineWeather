@@ -32,7 +32,7 @@ import java.util.List;
 
 public class AreaFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
-    private Context mContext = getContext();
+    private Context mContext ;
 
     private final static int LEVEL_PROVINCE = 0;
     private final static int LEVEL_CITY = 1;
@@ -53,7 +53,7 @@ public class AreaFragment extends BaseFragment implements AdapterView.OnItemClic
 
     //省级列表
     private List<Province> mProvinceList;
-    private AreasData mProvincesData;
+    private ProvincesData mProvincesData;
     //市级列表
     private List<City> mCityList;
     private AreasData mCitiesData;
@@ -64,6 +64,12 @@ public class AreaFragment extends BaseFragment implements AdapterView.OnItemClic
     //
     private String mBaseAdress = "http://guolin.tech/api/china";
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = getContext();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -72,6 +78,7 @@ public class AreaFragment extends BaseFragment implements AdapterView.OnItemClic
 
         mAdapter = new ArrayAdapter<String>(mContext,android.R.layout.simple_list_item_1,mDataList);
         area_lv.setAdapter(mAdapter);
+        notifyDataListToProvince();
         return view;
     }
 
@@ -123,7 +130,7 @@ public class AreaFragment extends BaseFragment implements AdapterView.OnItemClic
         if(mProvincesData == null){
             mProvincesData = new ProvincesData();
         }
-        mProvinceList = mProvincesData.getDataList(Province.class,mBaseAdress,mProvincesData.mCallback);
+        mProvinceList = mProvincesData.getDataList(Province.class,mBaseAdress,mProvincesData.callback);
 
         return mProvinceList;
     }
@@ -132,7 +139,7 @@ public class AreaFragment extends BaseFragment implements AdapterView.OnItemClic
         if(mCitiesData == null){
             mCitiesData = new CitiesData(0);
         }
-        mCityList = mCitiesData.getDataList(City.class,mBaseAdress, mCitiesData.mCallback);
+       // mCityList = mCitiesData.getDataList(City.class,mBaseAdress,mCitiesData.callback);
 
         return mCityList;
     }
@@ -141,7 +148,7 @@ public class AreaFragment extends BaseFragment implements AdapterView.OnItemClic
         if(mCountiesData == null){
             mCountiesData = new CitiesData(0);
         }
-        mCountyList = mCountiesData.getDataList(County.class,mBaseAdress, mCountiesData.mCallback);
+       // mCountyList = mCountiesData.getDataList(County.class,mBaseAdress,mCountiesData.callback);
 
         return mCountyList;
     }
