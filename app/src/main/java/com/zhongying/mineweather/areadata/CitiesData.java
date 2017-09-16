@@ -3,6 +3,7 @@ package com.zhongying.mineweather.areadata;
 import android.text.TextUtils;
 
 import com.zhongying.mineweather.areadata.base.AreasData;
+import com.zhongying.mineweather.areadata.base.Callback;
 import com.zhongying.mineweather.db.City;
 
 import org.json.JSONArray;
@@ -18,33 +19,24 @@ import java.util.List;
 
 public class CitiesData extends AreasData {
 
-    int provinceId;
+    private int provinceId;
 
-    Callback callback = new Callback() {
-        @Override
-        public void preCallback() {
+    private Callback callback;
 
-        }
-
-        @Override
-        public void postCallback() {
-
-        }
-
-        @Override
-        public void onFailure() {
-
-        }
-
-        @Override
-        public void onSucceed() {
-
-        }
-    };
 
     //需要把当前省份的Id传进来
-    public CitiesData(int provinceId) {
+    public CitiesData(Callback callback) {
+        super(callback);
+        this.callback = callback;
+
+    }
+
+    private void setProvinceId(int provinceId){
         this.provinceId = provinceId;
+    }
+
+    public void setId(int provinceId){
+        setProvinceId(provinceId);
     }
 
     @Override

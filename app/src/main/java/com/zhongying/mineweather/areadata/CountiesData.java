@@ -3,6 +3,7 @@ package com.zhongying.mineweather.areadata;
 import android.text.TextUtils;
 
 import com.zhongying.mineweather.areadata.base.AreasData;
+import com.zhongying.mineweather.areadata.base.Callback;
 import com.zhongying.mineweather.db.County;
 
 import org.json.JSONArray;
@@ -18,35 +19,26 @@ import java.util.List;
 
 public class CountiesData extends AreasData {
 
-    int cityId;
+    private int cityId;
 
-    Callback callback = new Callback() {
-        @Override
-        public void preCallback() {
-
-        }
-
-        @Override
-        public void postCallback() {
-
-        }
-
-        @Override
-        public void onFailure() {
-
-        }
-
-        @Override
-        public void onSucceed() {
-
-        }
-    };
+    private Callback callback;
 
     /*
         构造函数
      */
-    public CountiesData(int cityId){
+    public CountiesData(Callback callback){
+        super(callback);
+        this.callback = callback;
+
+    }
+
+    private void setCityId(int cityId){
         this.cityId = cityId;
+    }
+
+    @Override
+    public void setId(int id) {
+        setCityId(id);
     }
 
     @Override

@@ -2,14 +2,11 @@ package com.zhongying.mineweather.areadata.base;
 
 import android.text.TextUtils;
 
-import com.zhongying.mineweather.okhttp.HttpCallback;
 import com.zhongying.mineweather.okhttp.HttpUtil;
 
-import java.io.IOException;
 import java.util.List;
 
-import okhttp3.Call;
-import okhttp3.Response;
+
 
 /**
  * @class: 控制所有地区级别行为的父类
@@ -18,13 +15,23 @@ import okhttp3.Response;
 
 public abstract class AreasData {
 
+    private Callback callback;
+
+    /**
+     * 构造函数
+     */
+    public AreasData(Callback callback){
+        this.callback = callback;
+    }
+
+    public abstract void setId(int id);
 
     /**
      * @function: 用固定的流程来控制返回当前级别的数据
      *          从本地或者服务器
      * @return 返回所需要的当前级别的数据
      */
-    public final List getDataList(Class<?> clzz,String adress,Callback callback){
+    public final List getDataList(Class<?> clzz,String adress){
         if(clzz==null||adress==null|| TextUtils.isEmpty(adress)||callback==null){
             return null;
         }
@@ -33,7 +40,10 @@ public abstract class AreasData {
 
         //先向网络发起请求，请求成功后，解析数据并保存到本地，再从本地获取数据
         if(list == null || list.size()<=0){
-            queryFromServer(adress,callback);
+            callback.onPreResponse();
+            queryFromServer(adress);
+            saveDataIntoLite(callback.getResopnseText());
+            callback.onPostResponse();
             list = getDataListFromLite(clzz);
         }
 
@@ -46,10 +56,9 @@ public abstract class AreasData {
      */
     protected abstract List getDataListFromLite(Class<?> clzz);
 
-
     /**
-     * @function: 保存网络查询的数据到本地
-     * @return
+     * @function: 保存网络查询的数据到本地,需要在 onSucceed方法中调用
+     * @return true：成功保存
      */
     protected abstract boolean saveDataIntoLite(String response);
 
@@ -57,38 +66,8 @@ public abstract class AreasData {
      * @function： 向网络提前数据请求，并返回数据后，调用保存数据的方法
      * @param address
      */
-    private void queryFromServer(String address,Callback callback){
-        callback.preCallback();
-        HttpUtil.requestOkHttpUrl(address, callback);
-        callback.postCallback();
+    private void queryFromServer(String address){
+        HttpUtil.requestOkHttpUrl(address,callback);
     }
 
-    /**
-     * 回调函数
-     */
-    protected abstract class Callback extends HttpCallback{
-
-        @Override
-        public  void onFailure(Call call, IOException e){
-            onFailure();
-        }
-
-        @Override
-        public void onResponse(Call call, Response response) throws IOException {
-            String responseText = response.body().string();
-            if(!saveDataIntoLite(responseText)){
-                onFailure();
-            }else {
-                onSucceed();
-            }
-        }
-
-        public abstract void preCallback();
-
-        public abstract void postCallback();
-
-        public abstract void onFailure();
-
-        public abstract void onSucceed();
-    }
 }

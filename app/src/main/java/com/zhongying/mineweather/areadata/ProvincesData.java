@@ -4,7 +4,7 @@ import android.text.TextUtils;
 
 import com.zhongying.mineweather.areadata.base.AreasData;
 import com.zhongying.mineweather.db.Province;
-
+import com.zhongying.mineweather.areadata.base.Callback;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,12 +19,19 @@ import java.util.List;
 
 public class ProvincesData extends AreasData {
 
-    public Callback callback;
+    private Callback callback;
 
-    public ProvincesData(){
-        this.callback = new ProvincesData.Callback(){
+    /**
+     * 构造函数
+     */
+    public ProvincesData(Callback callback){
+        super(callback);
+        this.callback = callback;
+    }
 
-        };
+    @Override
+    public void setId(int id) {
+
     }
 
     /**
@@ -69,27 +76,5 @@ public class ProvincesData extends AreasData {
         }
     }
 
-    public class Callback extends AreasData.Callback{
-
-        @Override
-        public void preCallback() {
-
-        }
-
-        @Override
-        public void postCallback() {
-
-        }
-
-        @Override
-        public void onFailure() {
-
-        }
-
-        @Override
-        public void onSucceed() {
-
-        }
-    }
 
 }
