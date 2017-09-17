@@ -17,7 +17,7 @@ import org.json.JSONObject;
 
 public class ResolveArea{
     /**
-     * @function: 解析和处理省级数据
+     * @function: 解析省级数据,把数据保存到本地
      * @param response 返回的数据
      * @return  true：成功返回
      */
@@ -67,7 +67,7 @@ public class ResolveArea{
     }
 
     public static boolean handleCountyResponse(String response,int cityId){
-        if(response ==null || TextUtils.isEmpty(response) || cityId<=34){
+        if(response ==null || TextUtils.isEmpty(response) ){
             return false;
         }
 
@@ -79,6 +79,7 @@ public class ResolveArea{
                 c.setCountyName(county.getString("name"));
                 c.setWeatherId(county.getString("weather_id"));
                 c.setCityId(cityId);
+                c.save();
             }
             return true;
         }catch (JSONException e) {
