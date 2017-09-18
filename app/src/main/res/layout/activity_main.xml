@@ -7,10 +7,6 @@
     android:orientation="vertical"
     tools:context="com.zhongying.mineweather.activity.MainActivity">
 
-    <fragment
-        android:id="@+id/choose_area_fragment"
-        android:name="com.zhongying.mineweather.fragment.AreaFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    <include layout="@layout/include_weather_main_layout"/>
 
 </LinearLayout>

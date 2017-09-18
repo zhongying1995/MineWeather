@@ -64,8 +64,8 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
     private List<String> mDataList = new ArrayList<>();
 
     //当前点击的省、市的 Id
-    private int mCurrentProvinceId;
-    private int mCurrentCityId;
+    private Province mCurrentProvince;
+    private City mCurrentCity;
 
     //当前使用的省、市的 List
     private List<Province> mChosenProvinceList;
@@ -95,6 +95,7 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
         this.title_tv = (TextView) view.findViewById(R.id.area_title_tv);
         this.back_iv = (ImageView) view.findViewById(R.id.area_back_btn);
         this.back_iv.setOnClickListener(this);
+        back_iv.setVisibility(View.INVISIBLE);
         this.area_lv = (ListView) view.findViewById(R.id.chosen_city_lv);
     }
     //初始化listview的adapter
@@ -112,6 +113,7 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
                 queryCitysData();
                 break;
             case LEVEL_CITY:
+                back_iv.setVisibility(View.INVISIBLE);
                 queryProvincesData();
                 break;
         }
@@ -121,11 +123,12 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch (mCurrentLevel){
             case LEVEL_PROVINCE:
-                mCurrentProvinceId = mChosenProvinceList.get(position).getProvinceId();
+                back_iv.setVisibility(View.VISIBLE);
+                mCurrentProvince = mChosenProvinceList.get(position);
                 queryCitysData();
                 break;
             case LEVEL_CITY:
-                mCurrentCityId = mChosenCityList.get(position).getCityId();
+                mCurrentCity = mChosenCityList.get(position);
                 queryCountyData();
                 break;
             case LEVEL_COUNTY:
@@ -157,8 +160,9 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
     //从本地litepal库获取市级的数据
     private void queryCitysData(){
         mChosenCityList = DataSupport.
-                where("provinceid = ?",String.valueOf(mCurrentProvinceId)).find(City.class);
+                where("provinceid = ?",String.valueOf(mCurrentProvince.getProvinceId())).find(City.class);
         if(mChosenCityList.size()>0){
+            notifyTitle(mCurrentProvince.getProvinceName());
             mDataList.clear();
             for(City city : mChosenCityList){
                 mDataList.add(city.getCityName());
@@ -168,7 +172,7 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
             mCurrentLevel = LEVEL_CITY;
         }else {
             //请求网络访问
-            String address = BASE_URL +"/"+ mCurrentProvinceId;
+            String address = BASE_URL +"/"+ mCurrentProvince.getProvinceId();
             queryDataFormServer(address,LEVEL_CITY);
         }
 
@@ -177,9 +181,10 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
     //从本地litepal库获取县级的数据
     private void queryCountyData(){
         mChosenCountyList = DataSupport.
-                where("cityId = ?",String .valueOf(mCurrentCityId)).find(County.class);
-        Log.i(TAG,"cityId = "+mCurrentCityId);
+                where("cityId = ?",String .valueOf(mCurrentCity.getCityId())).find(County.class);
+        Log.i(TAG,"cityId = "+mCurrentCity.getCityId());
         if(mChosenCountyList.size()>0){
+            notifyTitle(mCurrentCity.getCityName());
             mDataList.clear();
             for (County county: mChosenCountyList){
                 mDataList.add(county.getCountyName());
@@ -189,7 +194,8 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
             area_lv.setSelection(0);
             mCurrentLevel = LEVEL_COUNTY;
         }else {
-            String address = BASE_URL + "/" + mCurrentProvinceId+"/"+mCurrentCityId;
+            String address = BASE_URL + "/" +
+                    mCurrentProvince.getProvinceId()+"/"+mCurrentCity.getCityId();
             Log.i(TAG,address);
             queryDataFormServer(address,LEVEL_COUNTY);
         }
@@ -222,10 +228,10 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
                         break;
                     case LEVEL_CITY:
                         isSaved = ResolveArea.
-                                handleCityResponse(text, mCurrentProvinceId);
+                                handleCityResponse(text, mCurrentProvince.getProvinceId());
                         break;
                     case LEVEL_COUNTY:
-                        isSaved = ResolveArea.handleCountyResponse(text,mCurrentCityId);
+                        isSaved = ResolveArea.handleCountyResponse(text,mCurrentCity.getCityId());
                         break;
                 }
 
@@ -270,6 +276,10 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
             dialog.dismiss();
         }
 
+    }
+
+    private void notifyTitle(String title){
+        title_tv.setText(title);
     }
 
 }
