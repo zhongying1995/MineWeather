@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="160dp">
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/remove_item_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/remove"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="4"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/current_county_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:text="西青路"
+                    android:textSize="32sp" />
+
+                <TextView
+                    android:id="@+id/current_city_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/current_county_tv"
+                    android:layout_below="@+id/current_county_tv"
+                    android:text="天津 | 天津"
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:id="@+id/weather_icon_iv"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignTop="@+id/current_temperature"
+                    android:layout_toLeftOf="@+id/current_temperature"
+                    android:layout_marginRight="10dp"
+                    android:scaleType="fitCenter"
+                    android:src="@mipmap/sunny" />
+
+                <TextView
+                    android:id="@+id/current_temperature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp"
+                    android:text="30°"
+                    android:textSize="40sp" />
+                <TextView
+                    android:id="@+id/max_min_temp_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="35°/ 34°"
+                    android:layout_below="@+id/current_temperature"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="20dp"
+                    android:textSize="22sp"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:text="空气良|湿度60%|西南风微风"
+                    android:textSize="20dp"/>
+
+
+            </RelativeLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
