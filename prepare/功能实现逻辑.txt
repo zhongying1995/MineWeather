@@ -1,0 +1,27 @@
+
+
+
+管理城市：
+	收藏的城市：
+		-通过sqlite保存一个set<countyWeather>列表
+		 当进入界面时，判断该set.size()
+		 key 为countyId
+		 value 为 countyWeather 类
+
+		 -保存的类型
+		 class countyWeather{
+		 	String countyId ;
+		 	String provinceName;
+		 	String cityName;
+		 }
+
+
+
+
+
+
+
+
+
+
+

@@ -7,12 +7,12 @@ https://free-api.heweather.com/v5/weather?city=yourcity&key=yourkey
         "city": {
           "aqi": "89",//AQI指数
           "co": "1",//一氧化碳
-          "no2": "27",//二氧化碳
+          "no2": "27",//二氧化氮
           "o3": "132",//臭氧
           "pm10": "110",//PM10
           "pm25": "66",//PM2.5
           "qlty": "良",//空气质量级别
-          "so2": "3"//二氧化碳
+          "so2": "3"//二氧化硫
         }
       },
       "basic": {//基本信息
