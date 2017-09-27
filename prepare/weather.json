@@ -16,7 +16,7 @@ https://free-api.heweather.com/v5/weather?city=yourcity&key=yourkey
         }
       },
       "basic": {//基本信息
-        "city": "北京",//城市名称
+        "city": "北京",//城市名称 --county_name_tv
         "cnty": "中国",//国家
         "id": "CN101010100",//城市ID
         "lat": "39.90498734",//城市维度

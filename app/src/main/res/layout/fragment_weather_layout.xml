@@ -28,6 +28,7 @@
 
 
     <LinearLayout
+        android:id="@+id/weather_control_linear"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -49,8 +50,6 @@
                     android:layout_alignParentStart="true"
                     android:src="@mipmap/area" />
 
-
-
                 <ImageView
                     android:id="@+id/plus_area_iv"
                     android:layout_width="46dp"
@@ -67,26 +66,64 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="10"
+            android:background="@color/weatherBgColor"
             android:orientation="vertical">
 
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:scrollbars="none">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <include layout="@layout/includ_weather_main_layout" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/weatherItemColor">
+                        <include layout="@layout/includ_weather_main_layout" />
+                    </LinearLayout>
 
-                    <include layout="@layout/includ_weather_nexthour_layout" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/weatherItemColor"
+                        android:layout_marginTop="8dp">
+                        <include layout="@layout/includ_weather_nexthour_layout" />
+                    </LinearLayout>
 
-                    <include layout="@layout/includ_weather_days_layout" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/weatherItemColor"
+                        android:layout_marginTop="8dp">
+                        <LinearLayout
+                            android:id="@+id/days_linear"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/weatherItemColor"
+                        android:layout_marginTop="8dp">
+                        <include layout="@layout/includ_weather_sugg_layout"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/weatherItemColor"
+                        android:layout_marginTop="15dp">
+                        <include layout="@layout/includ_weather_bottom_layout"/>
+                    </LinearLayout>
                 </LinearLayout>
             </ScrollView>
-
-            <include layout="@layout/includ_weather_bottom_layout"/>
 
         </LinearLayout>
 

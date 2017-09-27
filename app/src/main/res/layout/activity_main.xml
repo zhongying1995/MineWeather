@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,12 +8,12 @@
     tools:context="com.zhongying.mineweather.activity.MainActivity">
 
     <fragment
-        android:id="@+id/weather_fragment"
+        android:id="@+id/choose_area_fragment"
+        android:name="com.zhongying.mineweather.fragment.AreaFragment"
+        android:tag=" R.layout.fragment_choose_area_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:tag="R.layout.fragment_weather_layout"
-        android:name="com.zhongying.mineweather.fragment.WeatherFragment"
-        tools:layout="@layout/fragment_weather_layout" />
+        android:layout_height="match_parent">
 
+    </fragment>
 
-</LinearLayout>
+</FrameLayout>

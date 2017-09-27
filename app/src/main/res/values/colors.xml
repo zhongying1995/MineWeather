@@ -3,4 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="weatherBgColor">#f4e3e9e8</color>
+    <color name="weatherItemColor">#f5f0f0</color>
+
 </resources>

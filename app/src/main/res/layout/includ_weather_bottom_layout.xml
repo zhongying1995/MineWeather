@@ -17,13 +17,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="2017/09/03 20:40"
-                android:textSize="15sp"/>
+                android:textSize="14sp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="2dp"
                 android:text="更新"
-                android:textSize="14sp"/>
+                android:textSize="12sp"/>
         </LinearLayout>
 
         <TextView

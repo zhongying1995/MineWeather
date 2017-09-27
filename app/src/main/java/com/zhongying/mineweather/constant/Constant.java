@@ -14,4 +14,11 @@ public class Constant {
     /*
         https://free-api.heweather.com/v5/weather?city=yourcity&key=yourkey
     */
+
+    //请求每日必应一图的 url
+    public static String BACKGROUND_PICTURE_URL = "http://guolin.tech/api/bing_pic";
+
+    //pre使用的保存 背景图 的 key
+    public static String SHARED_KEY_BACKGROUND = "background";
+
 }

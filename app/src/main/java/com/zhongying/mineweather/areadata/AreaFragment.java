@@ -87,7 +87,7 @@ public class AreaFragment extends BaseFragment implements AdapterView.OnItemClic
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragement_choose_area_layout,container,false);
+        View view = inflater.inflate(R.layout.fragment_choose_area_layout,container,false);
         initView( view);
 
         mAdapter = new ArrayAdapter<String>(mContext,android.R.layout.simple_list_item_1,mDataList);

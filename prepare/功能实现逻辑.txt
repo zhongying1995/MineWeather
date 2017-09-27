@@ -1,10 +1,14 @@
 
+天气图标：
+	-优先本地查询，没有时则去网络下载，下载结束保存
+	https://cdn.heweather.com/cond_icon/100.png
+	-没必要使用网络吧，图标数量不多，也不大，可以直接手动缓存好，直接使用就行
 
 
 管理城市：
 	收藏的城市：
-		-通过sqlite保存一个set<countyWeather>列表
-		 当进入界面时，判断该set.size()
+		-通过sqlite保存一个list<countyWeather>列表
+		 当进入界面时，判断该list.size()
 		 key 为countyId
 		 value 为 countyWeather 类
 

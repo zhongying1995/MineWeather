@@ -1,0 +1,129 @@
+https://free-api.heweather.com/v5/weather?city=yourcity&key=yourkey
+
+{
+  "HeWeather5": [
+    {
+      "aqi": {//空气质量实况数据
+        "city": {
+          "aqi": "89",//AQI指数
+          "co": "1",//一氧化碳
+          "no2": "27",//二氧化氮
+          "o3": "132",//臭氧
+          "pm10": "110",//PM10
+          "pm25": "66",//PM2.5
+          "qlty": "良",//空气质量级别  --air_quality_tv
+          "so2": "3"//二氧化硫
+        }
+      },
+      "basic": {//基本信息
+        "city": "北京",//城市名称 --county_name_tv
+        "id": "CN101010100",//城市ID
+        "update": {//更新时间
+          "loc": "2017-09-03 20:46",  --update_time_tv
+        }
+      },
+      "daily_forecast": [//3天的天气预报
+        {
+          "astro": {//天文数值
+            "sr": "05:45",//日出时间  --days1_sunrise_tv
+            "ss": "18:43"//出落时间 --days1_sundown_tv
+          },
+          "cond": {//天气状况
+            "code_d": "100",//白天天气状况代码  --days1_cond_iv
+          },
+          "tmp": {//温度
+            "max": "29",//最高温度  --min_temp_tv
+            "min": "19"//最低温度 --max_temp_tv
+          },
+          "wind": {//风力风向
+            "dir": "南风",//风向 --days1_win_tv
+            "sc": "微风",//风力等级   --days1_win_tv
+          }
+        },
+        {
+          "astro": {//天文数值
+            "sr": "05:46",//  --days1_sunrise_tv
+            "ss": "18:41"// --days1_sundown_tv
+          },
+          "cond": {//天气状况
+            "code_d": "104",  --days1_cond_iv
+          },
+          "tmp": {
+            "max": "28",
+            "min": "20"
+          },
+          "wind": {//风力风向
+            "dir": "南风",  --days1_win_tv
+            "sc": "微风", --days1_win_tv
+          }
+        },
+        {
+          "astro": {
+            "sr": "05:46",
+            "ss": "18:40"
+          },
+          "cond": {
+            "code_d": "104",
+          },
+          "tmp": {
+            "max": "29",
+            "min": "18"
+          },
+          "wind": {
+            "dir": "北风",
+            "sc": "微风",
+          }
+        }
+      ],
+      "hourly_forecast": [//未来每小时预报
+        {
+          "cond": {//天气状况
+            "code": "103",//天气状况代码  --next_hour_code_iv
+            "txt": "晴间多云"//天气状况描述 --next_hour_txt_tv
+          },
+          "tmp": "22",//温度  --next_hour_temp_tv
+          "wind": {//风力风向
+            "dir": "西南风",//风向   --next_hour_win_tv微西南风
+            "sc": "微风",//风力   --next_hour_win_tv
+          }
+        }
+      ],
+      "now": {//实况天气
+        "cond": {//天气状况
+          "code": "104",//天气状况代码  --now_cond_icond_iv
+          "txt": "阴"//天气状况描述  --now_cond_txt_tv
+        },
+        "tmp": "23",//温度  --now_temp_tv
+      },
+      "status": "ok",
+      "suggestion": {//生活指数
+        "air": {//空气指数  --air_suggest
+          "brf": "中",
+          "txt": "气象条件对空气污染物稀释、扩散和清除无明显影响，易感人群应适当减少室外活动时间。"
+        },
+         "comf": {//舒适度指数 --comfort_suggest
+          "brf": "较舒适",//简介
+          "txt": "白天以阴或多云天气为主，但稍会让您感到有点儿热，但大部分人完全可以接受。"//详细解释
+        },
+        
+        "drsg": {//穿衣指数 --cloth_suggest
+          "brf": "热",
+          "txt": "天气热，建议着短裙、短裤、短薄外套、T恤等夏季服装。"
+        },
+        "flu": {//感冒指数  --ill_suggest
+          "brf": "少发",
+          "txt": "各项气象条件适宜，无明显降温过程，发生感冒机率较低。"
+        },
+        "sport": {//运动指数  --sport_suggest
+          "brf": "较不宜",
+          "txt": "阴天，且天气较热，请减少运动时间并降低运动强度。"
+        },
+        "trav": {//旅游指数 --expert_sugg_tv
+          "brf": "适宜",
+          "txt": "天气较好，温度适宜，总体来说还是好天气哦，这样的天气适宜旅游，您可以尽情地享受大自然的风光。"
+        },
+        
+      }
+    }
+  ]
+}

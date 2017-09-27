@@ -1,7 +1,9 @@
 package com.zhongying.mineweather.fragment;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -15,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.zhongying.mineweather.R;
+import com.zhongying.mineweather.activity.WeatherActivity;
 import com.zhongying.mineweather.db.City;
 import com.zhongying.mineweather.db.County;
 import com.zhongying.mineweather.db.Province;
@@ -57,7 +60,7 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
 
     private int mCurrentLevel = 0;
 
-    private Context mContext;
+    private Activity mActivity;
 
     private ArrayAdapter<String > adapter;
 
@@ -78,13 +81,17 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.mContext = context;
+        this.mActivity = getActivity();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate( R.layout.fragement_choose_area_layout,container,false);
+        if(mActivity == null){
+            this.mActivity = getActivity();
+        }
+
+        View view = inflater.inflate( R.layout.fragment_choose_area_layout,container,false);
         initView(view);
         initAdapter();
         return view;
@@ -100,7 +107,7 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
     }
     //初始化listview的adapter
     private void initAdapter(){
-        adapter = new ArrayAdapter<String >(mContext,android.R.layout.simple_list_item_1,mDataList);
+        adapter = new ArrayAdapter<String >(mActivity,android.R.layout.simple_list_item_1,mDataList);
         area_lv.setAdapter(adapter);
         area_lv.setOnItemClickListener(this);
         queryProvincesData();
@@ -132,7 +139,11 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
                 queryCountyData();
                 break;
             case LEVEL_COUNTY:
-
+                String weatherId = mChosenCountyList.get(position).getWeatherId();
+                Intent it = new Intent(mActivity, WeatherActivity.class);
+                it.putExtra("weather_id",weatherId);
+                startActivity(it);
+                mActivity.finish();
                 break;
         }
     }
@@ -263,7 +274,7 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
     //展示一个等待窗口
     private void showDialog(){
         if(dialog == null){
-            dialog = new ProgressDialog(mContext);
+            dialog = new ProgressDialog(mActivity);
             dialog.setCanceledOnTouchOutside(false);
             dialog.setMessage("Loading...");
         }

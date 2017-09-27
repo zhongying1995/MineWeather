@@ -14,7 +14,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="26dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp">
 
@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="晴转多云"
-                android:textSize="22dp" />
+                android:textSize="24dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -60,7 +60,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="微西南风"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
         </LinearLayout>
     </RelativeLayout>
 
