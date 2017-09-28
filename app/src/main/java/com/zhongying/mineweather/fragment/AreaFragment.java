@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.zhongying.mineweather.R;
+import com.zhongying.mineweather.activity.MainActivity;
 import com.zhongying.mineweather.activity.WeatherActivity;
 import com.zhongying.mineweather.constant.Constant;
 import com.zhongying.mineweather.db.City;
@@ -116,6 +117,7 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
         back_iv.setVisibility(View.INVISIBLE);
         this.area_lv = (ListView) view.findViewById(R.id.chosen_city_lv);
     }
+
     //初始化listview的adapter
     private void initAdapter(){
         adapter = new ArrayAdapter<String >(mActivity,android.R.layout.simple_list_item_1,mDataList);
@@ -163,10 +165,22 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
                 break;
             case LEVEL_COUNTY:
                 String weatherId = mChosenCountyList.get(position).getWeatherId();
-                Intent it = new Intent(mActivity, WeatherActivity.class);
-                it.putExtra("weather_id",weatherId);
-                startActivity(it);
-                mActivity.finish();
+
+                //保存当前的weatherId
+                SharedPreferencesManager.getInstance().putString(Constant.SHARED_KEY_WEATHERID,weatherId);
+
+                if(mActivity instanceof MainActivity){
+                    Intent it = new Intent(mActivity, WeatherActivity.class);
+                    it.putExtra("weather_id",weatherId);
+                    startActivity(it);
+                    mActivity.finish();
+                }else if(mActivity instanceof WeatherActivity){
+                    WeatherActivity activity = (WeatherActivity) mActivity;
+                    activity.closeDrawer();
+                    activity.openRefresh();
+                    activity.requestWeather(weatherId);
+                }
+
                 break;
         }
     }
@@ -350,5 +364,6 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
     private void showBgPicture(String picture){
         Glide.with(mActivity).load(picture).into(mBgPicture_iv);
     }
+
 
 }

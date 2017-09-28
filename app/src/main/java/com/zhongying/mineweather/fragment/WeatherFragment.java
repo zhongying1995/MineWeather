@@ -6,8 +6,10 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zhongying.mineweather.R;
+import com.zhongying.mineweather.constant.Constant;
 import com.zhongying.mineweather.db.SharedPreferencesManager;
 import com.zhongying.mineweather.fragment.base.BaseFragment;
 import com.zhongying.mineweather.gson.DailyForecast;
@@ -27,6 +30,7 @@ import com.zhongying.mineweather.gson.HeWeather;
 import com.zhongying.mineweather.gson.Wind;
 import com.zhongying.mineweather.okhttp.HttpCallback;
 import com.zhongying.mineweather.okhttp.HttpUtil;
+import com.zhongying.mineweather.service.AutoUpdateService;
 import com.zhongying.mineweather.utily.Utilies;
 
 import java.io.IOException;
@@ -39,7 +43,8 @@ import okhttp3.Response;
  * Created by Administrator on 2017/9/19.
  */
 
-public class WeatherFragment extends BaseFragment implements View.OnClickListener,View.OnLongClickListener{
+public class WeatherFragment extends BaseFragment implements View.OnClickListener,View.OnLongClickListener
+            ,SwipeRefreshLayout.OnRefreshListener{
 
     private String TAG = "WeatherFragment";
 
@@ -79,6 +84,13 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     private TextView mUpdateTime_tv;
 
     boolean isHadLongClick = false;
+
+    //下拉刷新
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
+    //当前的城市id
+    private String mWeatherId;
+
 
     @Override
     public void onAttach(Context context) {
@@ -137,17 +149,25 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         //建议、更新
         mSuggTravel_tv = (TextView) view.findViewById(R.id.sugg_travel_tv);
         mUpdateTime_tv = (TextView) view.findViewById(R.id.update_time_tv);
+
+        //下拉刷新
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+
     }
 
     private void initData(){
-        String weatherText = SharedPreferencesManager.getInstance().getString("weather");
+        String weatherText = SharedPreferencesManager
+                .getInstance().getString(Constant.SHARED_KEY_WEATHER_JSON);
         if(weatherText == null || TextUtils.isEmpty(weatherText)){
             //没用从本地prefer获取天气weatherJson，从网络请求
-            String weatherId = mActivity.getIntent().getStringExtra("weather_id");
+            mWeatherId = mActivity.getIntent().getStringExtra("weather_id");
             mWeatherControl_linear.setVisibility(View.INVISIBLE);
-            requestWeather(weatherId);
+            requestWeather(mWeatherId);
         }else {
             HeWeather weather = Utilies.handleWeatherResponse(weatherText);
+            mWeatherId = weather.basic.weatherId;
             showWeatherInfo(weather);
         }
     }
@@ -155,7 +175,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.to_choose_area_iv:
-                Log.i(TAG,"to_choose_area_iv()");
+
                 break;
             case R.id.plus_area_iv:
                 Log.i(TAG,"onClick()");
@@ -234,6 +254,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         return true;
     }
 
+
     //请求网络数据
     public void requestWeather(final String weatherId){
 
@@ -247,6 +268,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                     public void run() {
                         Toast.makeText(mActivity,"请求天气信息失败....",
                                 Toast.LENGTH_SHORT).show();
+                        mSwipeRefreshLayout.setRefreshing(false);
                     }
                 });
             }
@@ -257,13 +279,18 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if(weather==null|| (!"Ok".equals(weather.status))){
+
+                        //保存网络下载的信息
+                        if(Utilies.isWeatherResponseAvailable(weather)){
+                            SharedPreferencesManager.getInstance()
+                                    .putString(Constant.SHARED_KEY_WEATHER_JSON,text);
+                            showWeatherInfo(weather);
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        }else {
                             Toast.makeText(mActivity,"请求天气信息失败....",
                                     Toast.LENGTH_SHORT).show();
                         }
-                        //保存网络下载的信息
-                        SharedPreferencesManager.getInstance().putString("weather",text);
-                        showWeatherInfo(weather);
+
                     }
                 });
             }
@@ -273,7 +300,8 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
 
     //对界面的控制设置天气数据
     private void showWeatherInfo(HeWeather weather){
-        if(weather == null){
+        if(weather == null || !"ok".equals(weather.status)){
+            Toast.makeText(mActivity,"请求天气数据失败...",Toast.LENGTH_SHORT).show();
             return;
         }
         //主界面
@@ -310,6 +338,10 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         mUpdateTime_tv.setText(weather.basic.update.updateTime);
 
         mWeatherControl_linear.setVisibility(View.VISIBLE);
+
+        //自动更新
+        Intent it = new Intent(mActivity, AutoUpdateService.class);
+        mActivity.startService(it);
     }
 
     //组合风的天气信息
@@ -326,5 +358,21 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         }
         return id;
     }
+
+    //下拉刷新
+    @Override
+    public void onRefresh() {
+        requestWeather(mWeatherId);
+    }
+
+    //打开下拉刷新
+    public void openRefresh(){
+        mSwipeRefreshLayout.setRefreshing(true);
+    }
+    //关闭下拉刷新
+    public void closeRefresh(){
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
 
 }

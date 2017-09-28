@@ -57,7 +57,7 @@ public class Utilies {
      */
     public static String getWeatherUrl(String weatherId){
         return "https://free-api.heweather.com/v5/weather?city="
-                +weatherId+"&key="+ Constant.KEY_FOR_HEWEATHER;
+                +weatherId+"&key="+ Constant.URLKEY_FOR_HEWEATHER;
     }
 
 
@@ -131,5 +131,10 @@ public class Utilies {
         mIcons.put("901", R.mipmap.icon901);
         mIcons.put("999", R.mipmap.icon999);
     }
+
+    public static boolean isWeatherResponseAvailable(HeWeather weather){
+        return weather!=null && "ok".equals(weather.status);
+    }
+
 
 }
