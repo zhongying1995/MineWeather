@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">MineWeather</string>
+    <string name="app_name">文字天气</string>
     <string name="expert_sugg">天气较好，温度适宜，总体来说还是好天气哦，这样的天气适宜旅游，您可以尽情地享受大自然的风光。</string>
 </resources>

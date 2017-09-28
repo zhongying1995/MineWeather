@@ -83,7 +83,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.i(TAG,"onAttach()");
+
         mActivity = getActivity();
     }
 
@@ -92,7 +92,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.i(TAG,"onCreateView()");
+
         if(mActivity == null){
             mActivity = getActivity();
         }
@@ -250,10 +250,9 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                     }
                 });
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String text = response.body().string();
+                final String text = response.body().string();
                 final HeWeather weather = Utilies.handleWeatherResponse(text);
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
@@ -263,7 +262,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                                     Toast.LENGTH_SHORT).show();
                         }
                         //保存网络下载的信息
-                        SharedPreferencesManager.getInstance().putString("weather","text");
+                        SharedPreferencesManager.getInstance().putString("weather",text);
                         showWeatherInfo(weather);
                     }
                 });
@@ -274,6 +273,9 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
 
     //对界面的控制设置天气数据
     private void showWeatherInfo(HeWeather weather){
+        if(weather == null){
+            return;
+        }
         //主界面
         mCountyName_tv.setText(weather.basic.city);
         //mIsCollected_iv.setImageResource(); 收藏选项
@@ -284,15 +286,15 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         mMinTemp_tv.setText(weather.dailyForecastList.get(0).temp.minTemp);
         mMaxTemp_tv.setText(weather.dailyForecastList.get(0).temp.maxTemp);
         //未来一小时
-        mNextHourTemp_tv.setText(weather.hourlyForcast.temperation);
-        mNextHourCode_iv.setImageResource(getWeatherIconId(weather.hourlyForcast.cond.code));
-        mNextHourTxt_tv.setText(weather.hourlyForcast.cond.info);
-        mNextHourWin_tv.setText(dealWinInfo(weather.hourlyForcast.wind));
+        mNextHourTemp_tv.setText(weather.hourlyForecastList.get(0).temperature);
+        mNextHourCode_iv.setImageResource(getWeatherIconId(weather.hourlyForecastList.get(0).cond.code));
+        mNextHourTxt_tv.setText(weather.hourlyForecastList.get(0).cond.info);
+        mNextHourWin_tv.setText(dealWinInfo(weather.hourlyForecastList.get(0).wind));
         //3天
         mDays_linearLayout.removeAllViews();
         for(DailyForecast forecast:weather.dailyForecastList){
             View view = LayoutInflater.from(mActivity).inflate(R.layout.item_days_layou,mDays_linearLayout,false);
-            ImageView condIcon = (ImageView) view.findViewById(R.id.days1_cond_iv);
+            ImageView condIcon = (ImageView) view.findViewById(R.id.days_cond_iv);
             TextView win_tv = (TextView) view.findViewById(R.id.days_win_tv);
             TextView sunrise = (TextView) view.findViewById(R.id.days_sunrise_tv);
             TextView sundown = (TextView) view.findViewById(R.id.days_sundown_tv);

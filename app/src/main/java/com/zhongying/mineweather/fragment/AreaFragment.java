@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +14,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.zhongying.mineweather.R;
 import com.zhongying.mineweather.activity.WeatherActivity;
+import com.zhongying.mineweather.constant.Constant;
 import com.zhongying.mineweather.db.City;
 import com.zhongying.mineweather.db.County;
 import com.zhongying.mineweather.db.Province;
+import com.zhongying.mineweather.db.SharedPreferencesManager;
 import com.zhongying.mineweather.fragment.base.BaseFragment;
 import com.zhongying.mineweather.okhttp.HttpCallback;
 import com.zhongying.mineweather.okhttp.HttpUtil;
@@ -43,6 +46,9 @@ import okhttp3.Response;
 public class AreaFragment extends BaseFragment implements View.OnClickListener,ListView.OnItemClickListener {
 
     private String TAG = "AreaFragment";
+
+    //背景图片
+    private ImageView mBgPicture_iv;
 
     private TextView title_tv;
 
@@ -94,11 +100,16 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
         View view = inflater.inflate( R.layout.fragment_choose_area_layout,container,false);
         initView(view);
         initAdapter();
+        /*暂时不使用背景图
+            initBgPicture();
+        */
         return view;
     }
 
     //初始化控件
     private void initView(View view){
+        mBgPicture_iv = (ImageView) view.findViewById(R.id.background_picture_iv);
+
         this.title_tv = (TextView) view.findViewById(R.id.area_title_tv);
         this.back_iv = (ImageView) view.findViewById(R.id.area_back_btn);
         this.back_iv.setOnClickListener(this);
@@ -111,6 +122,18 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
         area_lv.setAdapter(adapter);
         area_lv.setOnItemClickListener(this);
         queryProvincesData();
+    }
+
+    //初始化背景图片
+    private void initBgPicture(){
+
+        String picture = SharedPreferencesManager
+                .getInstance().getString(Constant.SHARED_KEY_BACKGROUND);
+        if(picture == null){
+            requestBgPituce();
+            return;
+        }
+        showBgPicture(picture);
     }
 
     @Override
@@ -193,13 +216,13 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
     private void queryCountyData(){
         mChosenCountyList = DataSupport.
                 where("cityId = ?",String .valueOf(mCurrentCity.getCityId())).find(County.class);
-        Log.i(TAG,"cityId = "+mCurrentCity.getCityId());
+
         if(mChosenCountyList.size()>0){
             notifyTitle(mCurrentCity.getCityName());
             mDataList.clear();
             for (County county: mChosenCountyList){
                 mDataList.add(county.getCountyName());
-                Log.i(TAG,county.getCountyName());
+
             }
             adapter.notifyDataSetChanged();
             area_lv.setSelection(0);
@@ -207,7 +230,7 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
         }else {
             String address = BASE_URL + "/" +
                     mCurrentProvince.getProvinceId()+"/"+mCurrentCity.getCityId();
-            Log.i(TAG,address);
+
             queryDataFormServer(address,LEVEL_COUNTY);
         }
     }
@@ -216,7 +239,6 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
     private void queryDataFormServer(String address, final int requestType){
         showDialog();
         HttpUtil.requestOkHttpUrl(address, new HttpCallback() {
-
             @Override
             public void onFailure(Call call, IOException e) {
                 getActivity().runOnUiThread(new Runnable() {
@@ -291,6 +313,42 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
 
     private void notifyTitle(String title){
         title_tv.setText(title);
+    }
+
+
+    //向网络请求背景图
+    private void requestBgPituce(){
+        String url = Constant.BACKGROUND_PICTURE_URL;
+        HttpUtil.requestOkHttpUrl(url, new HttpCallback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(mActivity,
+                                "请求背景图失败....",Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String picture = response.body().string();
+                SharedPreferencesManager .getInstance()
+                        .putString(Constant.SHARED_KEY_BACKGROUND,picture);
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showBgPicture(picture);
+                    }
+                });
+            }
+        });
+    }
+
+    //设置背景图
+    private void showBgPicture(String picture){
+        Glide.with(mActivity).load(picture).into(mBgPicture_iv);
     }
 
 }

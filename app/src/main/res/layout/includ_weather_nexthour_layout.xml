@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="未来一小时："
-        android:textSize="17dp" />
+        android:textSize="16sp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -22,8 +22,14 @@
             android:id="@+id/next_hour_temp_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="22°"
-            android:textSize="32dp" />
+            android:text="22"
+            android:textSize="32sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/next_hour_temp_tv"
+            android:text="°"
+            android:textSize="32sp" />
 
         <LinearLayout
             android:id="@+id/next_hour_weather_linear"
@@ -46,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="晴转多云"
-                android:textSize="24dp" />
+                android:textSize="24sp" />
         </LinearLayout>
 
         <LinearLayout

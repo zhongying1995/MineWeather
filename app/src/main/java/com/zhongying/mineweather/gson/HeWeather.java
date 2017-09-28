@@ -23,7 +23,7 @@ public class HeWeather {
     public List<DailyForecast> dailyForecastList;
 
     @SerializedName("hourly_forecast")
-    public HourlyForecast hourlyForcast;
+    public List<HourlyForecast> hourlyForecastList;
 
     @SerializedName("now")
     public Now now;

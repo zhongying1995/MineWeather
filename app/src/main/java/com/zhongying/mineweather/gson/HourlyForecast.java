@@ -9,11 +9,13 @@ import com.google.gson.annotations.SerializedName;
 public class HourlyForecast {
 
     @SerializedName("tmp")
-    public String temperation;
+    public String temperature;
 
     @SerializedName("wind")
     public Wind wind;
 
     @SerializedName("cond")
     public Condition cond;
+
+
 }

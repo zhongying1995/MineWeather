@@ -1,6 +1,7 @@
 package com.zhongying.mineweather.utily;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.zhongying.mineweather.R;
@@ -11,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -22,6 +24,12 @@ public class Utilies {
 
     private static Map<String,Integer> mIcons;
 
+    /**
+     * 构造函数，初始化某些数据
+     */
+    public Utilies(){
+
+    }
 
     /**
      * @function: 解析返回的天气数据
@@ -31,8 +39,9 @@ public class Utilies {
     public static HeWeather handleWeatherResponse(String response){
         try {
             JSONObject jsonObject = new JSONObject(response);
-            JSONArray jsonArray = jsonObject.getJSONArray("HeWeather");
+            JSONArray jsonArray = jsonObject.getJSONArray("HeWeather5");
             String weatherContent = jsonArray.getJSONObject(0).toString();
+            Log.w("importent",weatherContent);
             return new Gson().fromJson(weatherContent,HeWeather.class);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -61,7 +70,12 @@ public class Utilies {
         if(code==null || TextUtils.isEmpty(code)){
             return -1;
         }
-        return mIcons.get("code");
+        if(mIcons == null || mIcons.size()==0){
+            mIcons = new HashMap<>();
+            mIcons.clear();
+            initWeatherIconsId();
+        }
+        return mIcons.get(code);
     }
 
     private static void initWeatherIconsId(){

@@ -15,10 +15,17 @@ public class DailyForecast {
     public Condition condition;
 
     @SerializedName("tmp")
-    public Temperation temp;
+    public Temperature temp;
 
     @SerializedName("wind")
     public Wind wind;
+
+    public class Condition {
+        @SerializedName("code_d")
+        public String code;
+        @SerializedName("txt_d")
+        public String info;
+    }
 
     public class Astronomy{
         @SerializedName("sr")
@@ -27,7 +34,7 @@ public class DailyForecast {
         public String sundown;
     }
 
-    public class Temperation{
+    public class Temperature {
         @SerializedName("max")
         public String maxTemp;
         @SerializedName("min")
