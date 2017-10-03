@@ -34,6 +34,7 @@
             android:layout_weight="5">
 
             <RelativeLayout
+                android:id="@+id/city_temp_relative"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -46,14 +47,6 @@
                     android:text="西青路"
                     android:textSize="32sp" />
 
-                <TextView
-                    android:id="@+id/current_city_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/current_county_tv"
-                    android:layout_below="@+id/current_county_tv"
-                    android:text="天津 | 天津"
-                    android:textSize="20sp" />
 
                 <ImageView
                     android:id="@+id/weather_icon_iv"
@@ -98,12 +91,12 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/detailTemp_tv"
+                    android:id="@+id/wind_detail_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
-                    android:text="空气良|湿度60%|西南风微风"
+                    android:text="空气良|微西南风"
                     android:textSize="20dp"/>
 
 

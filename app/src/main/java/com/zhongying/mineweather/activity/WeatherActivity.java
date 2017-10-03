@@ -1,13 +1,15 @@
 package com.zhongying.mineweather.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 
 import com.zhongying.mineweather.R;
 import com.zhongying.mineweather.activity.base.BaseActivity;
-import com.zhongying.mineweather.fragment.AreaFragment;
+import com.zhongying.mineweather.fragment.ChooseAreaFragment;
 import com.zhongying.mineweather.fragment.WeatherFragment;
 
 /**
@@ -16,30 +18,99 @@ import com.zhongying.mineweather.fragment.WeatherFragment;
  */
 
 public class WeatherActivity extends BaseActivity {
+    private String TAG = "WeatherActivity";
 
     private DrawerLayout mDrawerlayout;
 
     private WeatherFragment mWeatherFragment;
 
-    private AreaFragment mCityFragment;
+    private ChooseAreaFragment mCityFragment;
+
+    //当前界面上展示的城市的weatherId
+    private String mCurrentWeatherId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.w(TAG,"onCreate()>>>>>>>>>>>>>>>>");
         setContentView(R.layout.activity_weather_layout);
-
         initView();
+        initData();
+        Log.w(TAG,"<<<<<<<<<<<<<<<<<onCreate()");
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(TAG,"onResume()>>>>>>>>>>>>>>>");
+        mCurrentWeatherId = mWeatherFragment.getWeatherId();
+        Log.i(TAG,"onResume() --- mCurrentWeatherId:"+mCurrentWeatherId);
+        Log.i(TAG,"<<<<<<<<<<<<<<<onResume()");
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i(TAG,"onActivityResult()>>>>>>>>>>>>>>>>");
+        switch (requestCode){
+            case AdminCountyActivity.REQUEST_CODE_FOR_WEATHER_ID:
+                if(resultCode == RESULT_OK){
+                    Log.i(TAG,"resultCode == RESULT_OK");
+                    String target = data.getStringExtra("target");
+                    Log.i(TAG,"target:"+target);
+                    if("exchange".equals(target)){
+                        Log.i(TAG,"\"exchange\".equals(target)");
+                        String weatherId = data.getStringExtra("weather_id");
+                        requestWeather(weatherId);
+
+                    }else if("delete".equals(target)){
+                        Log.i(TAG,"\"delete\".equals(target)");
+                        boolean deleteCity = data.getBooleanExtra("delete_city",false);
+                        if(deleteCity){
+                            //当前的城市被用户在管理界面取消收藏
+                            Log.i(TAG,"reverseCollectCity()");
+                            mWeatherFragment.reverseCollectCity();
+                        }
+                    }
+
+                }
+                break;
+            default:
+                Log.i(TAG,"default:");
+
+                break;
+        }
+
+        Log.i(TAG,"<<<<<<<<<<<<<<<<<<onActivityResult()");
+    }
+
+    public void startAdminCountyActivity(){
+        Log.i(TAG,"startAdminCountyActivity()>>>>>>>>>>>>>>>>>");
+        Log.i(TAG,"mCurrentWeatherId:"+mCurrentWeatherId);
+        AdminCountyActivity.startAdminCountyActivity(WeatherActivity.this,mCurrentWeatherId);
+        Log.i(TAG,"<<<<<<<<<<<<<<<<<startAdminCountyActivity()");
     }
 
     private void initView(){
         mDrawerlayout = (DrawerLayout) findViewById(R.id.drawerlayout);
         mWeatherFragment = (WeatherFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.weather_fragment);
-        mCityFragment = (AreaFragment) getSupportFragmentManager()
+        mCityFragment = (ChooseAreaFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.choose_area_fragment);
+    }
 
-
+    /*
+        当从管理城市的界面，点击切换城市时，使用该方法
+     */
+    private void initData(){
+        Log.i(TAG,"initData()>>>>>>>>>>>>");
+        Intent it = getIntent();
+        if(it != null && "AdminCountyActivity".equals(it.getStringExtra("from"))){
+            Log.i(TAG,"it != null && \"AdminCountyActivity\".equals(it.getStringExtra(\"from\"))");
+            String weatherId = it.getStringExtra("weather_id");
+            mWeatherFragment.requestWeather(weatherId);
+        }
+        Log.i(TAG,"<<<<<<<<<<<<initData()");
     }
 
     //打开侧拉
@@ -64,5 +135,7 @@ public class WeatherActivity extends BaseActivity {
     public void requestWeather(String weatherId){
         mWeatherFragment.requestWeather(weatherId);
     }
+
+
 
 }

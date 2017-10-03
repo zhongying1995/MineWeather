@@ -37,7 +37,7 @@ import okhttp3.Response;
 
 public class AreaFragment extends BaseFragment implements AdapterView.OnItemClickListener,View.OnClickListener {
 
-    private String TAG = "AreaFragment";
+    private String TAG = "ChooseAreaFragment";
 
     private Context mContext ;
 

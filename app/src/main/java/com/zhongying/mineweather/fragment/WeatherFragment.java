@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,8 +21,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zhongying.mineweather.R;
+import com.zhongying.mineweather.activity.WeatherActivity;
 import com.zhongying.mineweather.constant.Constant;
-import com.zhongying.mineweather.db.SharedPreferencesManager;
+import com.zhongying.mineweather.db.CityAdminItem;
+import com.zhongying.mineweather.db.CityAdminItemManager;
 import com.zhongying.mineweather.fragment.base.BaseFragment;
 import com.zhongying.mineweather.gson.DailyForecast;
 import com.zhongying.mineweather.gson.HeWeather;
@@ -31,6 +32,7 @@ import com.zhongying.mineweather.gson.Wind;
 import com.zhongying.mineweather.okhttp.HttpCallback;
 import com.zhongying.mineweather.okhttp.HttpUtil;
 import com.zhongying.mineweather.service.AutoUpdateService;
+import com.zhongying.mineweather.utily.SharedPreferencesManager;
 import com.zhongying.mineweather.utily.Utilies;
 
 import java.io.IOException;
@@ -48,7 +50,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
 
     private String TAG = "WeatherFragment";
 
-    private Activity mActivity;
+    private WeatherActivity mActivity;
 
     //标题栏
     private ImageView mChooseArea_iv;
@@ -60,7 +62,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
 
     //主天气部分
     private TextView mCountyName_tv;
-    private ImageView mIsCollected_iv;
+    private ImageView mIsCollected_iv;//收藏城市图标
     private TextView mNowTemperature_tv;
     private ImageView mNowCondIcon_iv;
     private TextView mNowCondTxt_tv;
@@ -90,31 +92,40 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
 
     //当前的城市id
     private String mWeatherId;
+    public String getWeatherId() {
+        return mWeatherId;
+    }
 
+
+    //城市是否被收藏,true：被收藏
+    private boolean mIsCollected;
+
+    //当前天气对应的数据实体类
+    private HeWeather mHeWeather;
+
+    private static int importent = 0;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        mActivity = getActivity();
+        mActivity = (WeatherActivity) getActivity();
     }
-
-
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
+        Log.i(TAG,"生命周期：onCreateView()");
         if(mActivity == null){
-            mActivity = getActivity();
+            mActivity = (WeatherActivity) getActivity();
         }
-
         View view = inflater.inflate(R.layout.fragment_weather_layout,container,false);
         initView(view);
         initData();
 
         return view;
     }
+
 
     private void initView(View view){
         //伪标题栏
@@ -158,41 +169,62 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     }
 
     private void initData(){
+        //初始化天气数据
+        Log.i(TAG,"initData()>>>>>>>>>>>");
+
+        importent++;
+        Log.i(TAG,"importent:"+importent);
+
         String weatherText = SharedPreferencesManager
                 .getInstance().getString(Constant.SHARED_KEY_WEATHER_JSON);
+        //没有从本地prefer获取天气weatherJson，从网络请求
         if(weatherText == null || TextUtils.isEmpty(weatherText)){
-            //没用从本地prefer获取天气weatherJson，从网络请求
-            mWeatherId = mActivity.getIntent().getStringExtra("weather_id");
-            mWeatherControl_linear.setVisibility(View.INVISIBLE);
-            requestWeather(mWeatherId);
+            Log.i(TAG,"没有数据缓存！！");
+            Intent it = mActivity.getIntent();
+            if("MainActivity".equals(it.getStringExtra("from"))){
+                mWeatherId = it.getStringExtra("weather_id");
+                Log.i(TAG,"initData() --- mWeatherId:"+mWeatherId);
+                mWeatherControl_linear.setVisibility(View.INVISIBLE);
+                requestWeather(mWeatherId);
+            }
         }else {
-            HeWeather weather = Utilies.handleWeatherResponse(weatherText);
-            mWeatherId = weather.basic.weatherId;
-            showWeatherInfo(weather);
+            Log.i(TAG,"有数据缓存！！");
+            mHeWeather = Utilies.handleWeatherResponse(weatherText);
+            if(mHeWeather == null){
+                return;
+            }
+            mWeatherId = mHeWeather.basic.weatherId;
+            showWeatherInfo(mHeWeather);
         }
+        Log.i(TAG,"<<<<<<<<<<<<<initData()");
     }
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.to_choose_area_iv:
-
+                mActivity.openDrawer();
                 break;
             case R.id.plus_area_iv:
-                Log.i(TAG,"onClick()");
-                if(isHadLongClick){
+                //根据情况来确定是跳转到管理城市页面还是收起imageView
+
                 //收起两个ImageView
+                if(isHadLongClick){
                     closeWindow();
                     break;
                 }
 
+                //跳转到管理城市的界面
+                mActivity.startAdminCountyActivity();
                 break;
             case R.id.setting_iv:
-
+                //跳转到设置界面
                 break;
             case R.id.share_iv:
-                Log.i(TAG,"share_iv 被点击!");
+                //分享功能
                 break;
             case R.id.is_collect_iv:
+                //收藏城市
+                reverseCollectCity();
 
                 break;
         }
@@ -246,7 +278,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                     closeWindow();
                 }else {
                 //展开两个imageView
-                   openWindow();
+                    openWindow();
                 }
 
                 break;
@@ -257,8 +289,19 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
 
     //请求网络数据
     public void requestWeather(final String weatherId){
+        Log.i(TAG,"requestWeather()>>>>>>>>>>>>");
 
+        importent++;
+        Log.i(TAG,"importent:"+importent);
+
+        if(weatherId == null){
+            Log.i(TAG,"weatherId == null");
+            return;
+        }
         String url = Utilies.getWeatherUrl(weatherId);
+        if(mWeatherId!=null && !weatherId.equals(mWeatherId)){
+            mWeatherId = weatherId;
+        }
 
         HttpUtil.requestOkHttpUrl(url, new HttpCallback() {
             @Override
@@ -266,7 +309,7 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(mActivity,"请求天气信息失败....",
+                        Toast.makeText(mActivity,"网络请求失败....",
                                 Toast.LENGTH_SHORT).show();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
@@ -279,15 +322,15 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
                         //保存网络下载的信息
                         if(Utilies.isWeatherResponseAvailable(weather)){
                             SharedPreferencesManager.getInstance()
                                     .putString(Constant.SHARED_KEY_WEATHER_JSON,text);
+                            mHeWeather = weather;//保存一个实体类对象
                             showWeatherInfo(weather);
                             mSwipeRefreshLayout.setRefreshing(false);
                         }else {
-                            Toast.makeText(mActivity,"请求天气信息失败....",
+                            Toast.makeText(mActivity,"请求的天气信息有问题....",
                                     Toast.LENGTH_SHORT).show();
                         }
 
@@ -295,29 +338,33 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                 });
             }
         });
-
+        Log.i(TAG,"<<<<<<<<<<<<requestWeather()");
     }
 
     //对界面的控制设置天气数据
     private void showWeatherInfo(HeWeather weather){
         if(weather == null || !"ok".equals(weather.status)){
-            Toast.makeText(mActivity,"请求天气数据失败...",Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity,"设置天气数据失败...",Toast.LENGTH_SHORT).show();
             return;
         }
         //主界面
-        mCountyName_tv.setText(weather.basic.city);
-        //mIsCollected_iv.setImageResource(); 收藏选项
-        mNowTemperature_tv.setText(weather.now.temperation);
+        mCountyName_tv.setText(weather.basic.cityName);
+
+        mNowTemperature_tv.setText(weather.now.temperature);
         mNowCondIcon_iv.setImageResource(getWeatherIconId(weather.now.condition.code));
         mNowCondTxt_tv.setText(weather.now.condition.info);
         mAirQuality_tv.setText(weather.aqi.city.quality);
         mMinTemp_tv.setText(weather.dailyForecastList.get(0).temp.minTemp);
         mMaxTemp_tv.setText(weather.dailyForecastList.get(0).temp.maxTemp);
         //未来一小时
-        mNextHourTemp_tv.setText(weather.hourlyForecastList.get(0).temperature);
-        mNextHourCode_iv.setImageResource(getWeatherIconId(weather.hourlyForecastList.get(0).cond.code));
-        mNextHourTxt_tv.setText(weather.hourlyForecastList.get(0).cond.info);
-        mNextHourWin_tv.setText(dealWinInfo(weather.hourlyForecastList.get(0).wind));
+        //有时候会抽风，不返回数据
+        if(weather.hourlyForecastList.size()!=0){
+            mNextHourTemp_tv.setText(weather.hourlyForecastList.get(0).temperature);
+            mNextHourCode_iv.setImageResource(getWeatherIconId(weather.hourlyForecastList.get(0).cond.code));
+            mNextHourTxt_tv.setText(weather.hourlyForecastList.get(0).cond.info);
+            mNextHourWin_tv.setText(dealWinInfo(weather.hourlyForecastList.get(0).wind));
+        }
+
         //3天
         mDays_linearLayout.removeAllViews();
         for(DailyForecast forecast:weather.dailyForecastList){
@@ -339,10 +386,15 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
 
         mWeatherControl_linear.setVisibility(View.VISIBLE);
 
+        //收藏图标的显示
+        showCollectCityIcon();
+
         //自动更新
         Intent it = new Intent(mActivity, AutoUpdateService.class);
         mActivity.startService(it);
     }
+
+
 
     //组合风的天气信息
     private String dealWinInfo(Wind wind){
@@ -374,5 +426,65 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
+    //处理收藏城市图标的显示
+    private void showCollectCityIcon(){
+        Log.i(TAG,"showCollectCityIcon()>>>>>>>>>>>>>>");
+        Log.i(TAG,"showCollectCityIcon()----mWeatherId:"+mWeatherId);
+
+        importent++;
+        Log.i(TAG,"importent:"+importent);
+
+        if(CityAdminItemManager.getInstance().isHadByWeatherId(mWeatherId)){
+            //当前城市已被收藏
+            Log.i(TAG,"当前城市已被收藏");
+            mIsCollected_iv.setImageResource(R.mipmap.collect);
+            mIsCollected = true;
+        }else {
+            Log.i(TAG,"当前城市未被收藏");
+            mIsCollected_iv.setImageResource(R.mipmap.uncollect);
+            mIsCollected = false;
+        }
+        Log.i(TAG,"<<<<<<<<<<<<<showCollectCityIcon()");
+    }
+
+
+    //反转当前收藏城市的操作，收藏改为不收藏，不收藏改为收藏
+    public void reverseCollectCity(){
+        Log.i(TAG,"reverseCollectCity()>>>>>>>>>>>>>>");
+        if(mIsCollected){
+            //取消收藏
+            Log.i(TAG,"已经收藏当前的城市，请求取消收藏");
+            mIsCollected = false;
+            CityAdminItemManager.getInstance().delete(mWeatherId);
+        }else {
+            //请求收藏
+            Log.i(TAG,"未收藏当前的城市，请求收藏");
+            mIsCollected = true;
+
+            CityAdminItem item = new CityAdminItem();
+            item.setCityName(mHeWeather.basic.cityName);
+            item.setAirQuality(mHeWeather.aqi.city.quality);
+            item.setCityWeatherId(mWeatherId);
+            item.setIconCode(mHeWeather.now.condition.code);
+            item.setTemperature(mHeWeather.now.temperature);
+            item.setMinTemperature(mHeWeather.dailyForecastList.get(0).temp.minTemp);
+            item.setMaxTemperature(mHeWeather.dailyForecastList.get(0).temp.maxTemp);
+            item.setWindDir(mHeWeather.dailyForecastList.get(0).wind.direction);
+            item.setWindForce(mHeWeather.dailyForecastList.get(0).wind.windForce);
+
+            CityAdminItemManager.getInstance().insert(item);
+        }
+        changeCollectCityIcon(mIsCollected);
+        Log.i(TAG,"<<<<<<<<<<<<<<reverseCollectCity()");
+    }
+
+    //更改收藏城市图标的显示
+    private void changeCollectCityIcon(boolean collect){
+        if(collect){
+            mIsCollected_iv.setImageResource(R.mipmap.collect);
+        }else {
+            mIsCollected_iv.setImageResource(R.mipmap.uncollect);
+        }
+    }
 
 }

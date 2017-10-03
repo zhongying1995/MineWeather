@@ -7,17 +7,28 @@
 
 管理城市：
 	收藏的城市：
-		-通过sqlite保存一个list<countyWeather>列表
-		 当进入界面时，判断该list.size()
-		 key 为countyId
-		 value 为 countyWeather 类
+		-通过litePal保存一个CityAdminItem的类，里面包含了需要展示的内容和
+		 更新数据的weatherId，
 
-		 -保存的类型
-		 class countyWeather{
-		 	String countyId ;
-		 	String provinceName;
-		 	String cityName;
-		 }
+		-控件全动态创建
+		 	-先循环创建已经收藏好的城市
+		 	-再最后创建一个 +号 的控件
+	-逻辑
+		-从选择城市界面点击城市，并且完成数据请求后，遍历litePal的CityAdminItem表，
+		 是否已经存在该城市，若已经收藏，则改正右上角的收藏图标，若未收藏，则显示
+		 心碎图标。
+		 	-已收藏时，同时更新该数据
+
+		-进入城市管理界面：遍历CityAdminItem的类，把他们封装成一个ArrayList列表
+		 如果长度为0，则表示没有城市收藏，不动态创建ListView
+		 如果长度不为0，动态创建ListView，并把得到的CityAdminItem数据，展示在item上
+		 再最后创建一个 加号 的按钮
+
+		-加号按钮：点击后，跳转到城市选择界面，如果最后确选了某个城市，则默认收藏该城市
+
+		-管理页面的item有一个删除按钮，点击后，会删除当前选中的城市，通过weatherId
+		 作为筛选条件
+		 点击减号右边的区域，则跳转到主天气页面，并切换城市
 
 
 

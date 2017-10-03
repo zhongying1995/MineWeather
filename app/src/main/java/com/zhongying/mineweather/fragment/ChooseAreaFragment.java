@@ -24,7 +24,7 @@ import com.zhongying.mineweather.constant.Constant;
 import com.zhongying.mineweather.db.City;
 import com.zhongying.mineweather.db.County;
 import com.zhongying.mineweather.db.Province;
-import com.zhongying.mineweather.db.SharedPreferencesManager;
+import com.zhongying.mineweather.utily.SharedPreferencesManager;
 import com.zhongying.mineweather.fragment.base.BaseFragment;
 import com.zhongying.mineweather.okhttp.HttpCallback;
 import com.zhongying.mineweather.okhttp.HttpUtil;
@@ -44,9 +44,9 @@ import okhttp3.Response;
  * Created by Administrator on 2017/9/17.
  */
 
-public class AreaFragment extends BaseFragment implements View.OnClickListener,ListView.OnItemClickListener {
+public class ChooseAreaFragment extends BaseFragment implements View.OnClickListener,ListView.OnItemClickListener {
 
-    private String TAG = "AreaFragment";
+    private String TAG = "ChooseAreaFragment";
 
     //背景图片
     private ImageView mBgPicture_iv;
@@ -167,10 +167,11 @@ public class AreaFragment extends BaseFragment implements View.OnClickListener,L
                 String weatherId = mChosenCountyList.get(position).getWeatherId();
 
                 //保存当前的weatherId
-                SharedPreferencesManager.getInstance().putString(Constant.SHARED_KEY_WEATHERID,weatherId);
+                SharedPreferencesManager.getInstance().putString(Constant.SHARED_KEY_WEATHER_ID,weatherId);
 
                 if(mActivity instanceof MainActivity){
                     Intent it = new Intent(mActivity, WeatherActivity.class);
+                    it.putExtra("from","MainActivity");
                     it.putExtra("weather_id",weatherId);
                     startActivity(it);
                     mActivity.finish();

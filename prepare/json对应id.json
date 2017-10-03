@@ -1,5 +1,5 @@
 https://free-api.heweather.com/v5/weather?city=yourcity&key=yourkey
-
+https://free-api.heweather.com/v5/weather?city=CN101010100&key=2832c11c7a8f4dea92295cd180afb0b8
 {
   "HeWeather5": [
     {
@@ -106,7 +106,7 @@ https://free-api.heweather.com/v5/weather?city=yourcity&key=yourkey
           "txt": "白天以阴或多云天气为主，但稍会让您感到有点儿热，但大部分人完全可以接受。"//详细解释
         },
         
-        "drsg": {//穿衣指数 --cloth_suggest
+        "drsg": {//穿衣指数 --dress_suggest
           "brf": "热",
           "txt": "天气热，建议着短裙、短裤、短薄外套、T恤等夏季服装。"
         },

@@ -19,7 +19,7 @@ import java.util.List;
  */
 
 public class CountiesData extends AreasData {
-    private String TAG = "AreaFragment";
+    private String TAG = "ChooseAreaFragment";
 
     private int cityId;
 

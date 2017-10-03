@@ -1,4 +1,4 @@
-package com.zhongying.mineweather.db;
+package com.zhongying.mineweather.utily;
 
 import android.content.Context;
 import android.content.SharedPreferences;

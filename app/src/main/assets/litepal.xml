@@ -9,6 +9,7 @@
         <mapping class="com.zhongying.mineweather.db.Province"/>
         <mapping class="com.zhongying.mineweather.db.City"/>
         <mapping class="com.zhongying.mineweather.db.County"/>
+        <mapping class="com.zhongying.mineweather.db.CityAdminItem"/>
     </list>
 
 </litepal>

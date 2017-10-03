@@ -9,7 +9,7 @@ import android.os.SystemClock;
 import android.text.TextUtils;
 
 import com.zhongying.mineweather.constant.Constant;
-import com.zhongying.mineweather.db.SharedPreferencesManager;
+import com.zhongying.mineweather.utily.SharedPreferencesManager;
 import com.zhongying.mineweather.gson.HeWeather;
 import com.zhongying.mineweather.okhttp.HttpCallback;
 import com.zhongying.mineweather.okhttp.HttpUtil;
@@ -56,7 +56,7 @@ public class AutoUpdateService extends Service {
      */
     private void updateWeather(){
         String weatherId = SharedPreferencesManager.getInstance()
-                .getString(Constant.SHARED_KEY_WEATHERID);
+                .getString(Constant.SHARED_KEY_WEATHER_ID);
         if(weatherId == null || TextUtils.isEmpty(weatherId)){
             return;
         }

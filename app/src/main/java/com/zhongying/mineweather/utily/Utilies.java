@@ -1,7 +1,6 @@
 package com.zhongying.mineweather.utily;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.zhongying.mineweather.R;
@@ -41,7 +40,6 @@ public class Utilies {
             JSONObject jsonObject = new JSONObject(response);
             JSONArray jsonArray = jsonObject.getJSONArray("HeWeather5");
             String weatherContent = jsonArray.getJSONObject(0).toString();
-            Log.w("importent",weatherContent);
             return new Gson().fromJson(weatherContent,HeWeather.class);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -136,5 +134,9 @@ public class Utilies {
         return weather!=null && "ok".equals(weather.status);
     }
 
+
+    public static float getSystemCurrentTime(){
+        return System.currentTimeMillis();
+    }
 
 }

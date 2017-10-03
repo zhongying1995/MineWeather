@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import com.zhongying.mineweather.R;
 import com.zhongying.mineweather.activity.base.BaseActivity;
-import com.zhongying.mineweather.db.SharedPreferencesManager;
+import com.zhongying.mineweather.utily.SharedPreferencesManager;
 
 /**
  * @class: 第一次进入软件时的页面

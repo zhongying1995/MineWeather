@@ -15,7 +15,7 @@ import okhttp3.Response;
 
 public abstract class Callback extends HttpCallback{
 
-    private String TAG = "AreaFragment";
+    private String TAG = "ChooseAreaFragment";
 
     private String  mResponseText;
 

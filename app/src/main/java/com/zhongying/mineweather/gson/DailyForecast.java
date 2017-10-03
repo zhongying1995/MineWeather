@@ -23,8 +23,8 @@ public class DailyForecast {
     public class Condition {
         @SerializedName("code_d")
         public String code;
-        @SerializedName("txt_d")
-        public String info;
+//        @SerializedName("txt_d")
+//        public String info;
     }
 
     public class Astronomy{

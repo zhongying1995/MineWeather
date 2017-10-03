@@ -22,12 +22,15 @@ public class Constant {
     public static final String SHARED_KEY_BACKGROUND = "background";
 
     //当前的weatherId
-    public static final String SHARED_KEY_WEATHERID = "weatherId";
+    public static final String SHARED_KEY_WEATHER_ID = "weatherId";
 
-    //当前的weather，保存的天气jsonString
+    /*
+        当前的weather，保存的天气jsonString
+        用于保存上一次打开的城市天气
+     */
     public static final String SHARED_KEY_WEATHER_JSON = "weather";
 
     //当前的自动更新间隔
-    public static final String  SHARED_KEY_AUTO_UPDATE_TIME = "aotuUpdateTime";
+    public static final String  SHARED_KEY_AUTO_UPDATE_TIME = "autoUpdateTime";
 
 }

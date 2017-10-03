@@ -16,7 +16,7 @@ import java.util.List;
 
 public abstract class AreasData {
 
-    private String TAG = "AreaFragment";
+    private String TAG = "ChooseAreaFragment";
 
     private Callback callback;
 
