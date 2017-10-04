@@ -9,4 +9,6 @@ public interface IDeleteCityListener {
     public void deleteCity(final String weatherId);
 
     public void exchangeCityWeather(final String weatherId);
+
+    public void addCity();
 }
