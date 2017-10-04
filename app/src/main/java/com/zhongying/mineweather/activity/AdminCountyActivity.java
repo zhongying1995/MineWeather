@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.zhongying.mineweather.R;
 import com.zhongying.mineweather.activity.base.BaseActivity;
 import com.zhongying.mineweather.adapter.CityAdminAdapter;
-import com.zhongying.mineweather.adapter.IDeleteCityListener;
+import com.zhongying.mineweather.adapter.IAdminCityItemListener;
 import com.zhongying.mineweather.db.CityAdminItem;
 import com.zhongying.mineweather.db.CityAdminItemManager;
 
@@ -26,7 +26,7 @@ import java.util.List;
  */
 
 public class AdminCountyActivity extends BaseActivity implements View.OnClickListener,
-        IDeleteCityListener{
+        IAdminCityItemListener {
     private String TAG = "AdminCountyActivity";
 
     public static final int REQUEST_CODE_FOR_WEATHER_ID = 1;
@@ -145,6 +145,13 @@ public class AdminCountyActivity extends BaseActivity implements View.OnClickLis
         finish();
     }
 
+    //当用户点击加号时，跳转到选择城市列表，如果选择城市，则添加默认添加该城市
+    @Override
+    public void addCity() {
+        setResultForAddCity();
+        finish();
+    }
+
     //当从管理城市界面点击切换城市到其他城市的回传
     private void setResultForExchangeCity(String weatherId){
         Intent it = new Intent();
@@ -158,6 +165,13 @@ public class AdminCountyActivity extends BaseActivity implements View.OnClickLis
         Intent it =new Intent();
         it.putExtra("target","delete");
         it.putExtra("delete_city",mHadDeletedCurrentCity);
+        setResult(RESULT_OK,it);
+    }
+
+    //当管理城市界面，点击加号，的固定回传
+    private void setResultForAddCity(){
+        Intent it =new Intent();
+        it.putExtra("target","add");
         setResult(RESULT_OK,it);
     }
 

@@ -29,7 +29,7 @@ public class CityAdminAdapter extends BaseAdapter {
 
     private List<CityAdminItem> mCityList;
 
-    private IDeleteCityListener mDeleteCityListener;
+    private IAdminCityItemListener mDeleteCityListener;
 
     //item样式的最大种类
     private static final int VIEW_TYPE_COUNT = 2;
@@ -39,8 +39,9 @@ public class CityAdminAdapter extends BaseAdapter {
     //添加item样式
     private static final int ADD_TYPE_ITEM = 1;
 
-    public CityAdminAdapter(Context context,List<CityAdminItem> cityList,IDeleteCityListener deleteCityListener){
+    public CityAdminAdapter(Context context, List<CityAdminItem> cityList, IAdminCityItemListener deleteCityListener){
         this.mContext = context;
+
         this.mCityList = cityList;
         this.mDeleteCityListener = deleteCityListener;
     }
@@ -101,12 +102,16 @@ public class CityAdminAdapter extends BaseAdapter {
                 if(holder.addItem_iv == null){
                     Log.i(TAG,"holder.addItem_iv == null");
                 }
-//            holder.addItem_iv.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    //点击添加城市按钮时的回调
-//                }
-//            });
+            holder.addItem_iv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //点击添加城市按钮时的回调
+                    if(mDeleteCityListener == null){
+                        return;
+                    }
+                    mDeleteCityListener.addCity();
+                }
+            });
             break;
             case NORMAL_TYPE_ITEM:
                 if(convertView == null){
@@ -137,6 +142,9 @@ public class CityAdminAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         //使用回调方式处理删除城市item
+                        if(mDeleteCityListener == null){
+                            return;
+                        }
                         mDeleteCityListener.deleteCity(item.getCityWeatherId());
                     }
                 });
@@ -144,6 +152,9 @@ public class CityAdminAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         //使用回调方式，跳转当前的界面去主天气界面，并且切换城市
+                        if(mDeleteCityListener == null){
+                            return;
+                        }
                         mDeleteCityListener.exchangeCityWeather(item.getCityWeatherId());
                     }
                 });

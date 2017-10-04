@@ -29,13 +29,22 @@ public class WeatherActivity extends BaseActivity {
     //当前界面上展示的城市的weatherId
     private String mCurrentWeatherId;
 
+    //在选择城市界面点击城市后，请求收藏城市
+    private boolean requestCollectCity;
+
+    public boolean getRequestCollectCity() {
+        return requestCollectCity;
+    }
+    public void setRequestCollectCity(boolean requestCollectCity) {
+        this.requestCollectCity = requestCollectCity;
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.w(TAG,"onCreate()>>>>>>>>>>>>>>>>");
         setContentView(R.layout.activity_weather_layout);
         initView();
-        initData();
         Log.w(TAG,"<<<<<<<<<<<<<<<<<onCreate()");
     }
 
@@ -71,6 +80,10 @@ public class WeatherActivity extends BaseActivity {
                             Log.i(TAG,"reverseCollectCity()");
                             mWeatherFragment.reverseCollectCity();
                         }
+                    }else if("add".equals(target)){
+                        Log.i(TAG,"\"add\".equals(target)");
+                        setRequestCollectCity(true);
+                        openDrawer();
                     }
 
                 }
@@ -99,18 +112,16 @@ public class WeatherActivity extends BaseActivity {
                 .findFragmentById(R.id.choose_area_fragment);
     }
 
-    /*
-        当从管理城市的界面，点击切换城市时，使用该方法
-     */
-    private void initData(){
-        Log.i(TAG,"initData()>>>>>>>>>>>>");
-        Intent it = getIntent();
-        if(it != null && "AdminCountyActivity".equals(it.getStringExtra("from"))){
-            Log.i(TAG,"it != null && \"AdminCountyActivity\".equals(it.getStringExtra(\"from\"))");
-            String weatherId = it.getStringExtra("weather_id");
-            mWeatherFragment.requestWeather(weatherId);
+    @Override
+    public void onBackPressed() {
+        if(!mDrawerlayout.isDrawerOpen(GravityCompat.START)){
+            super.onBackPressed();
+        }else {
+            if(!mCityFragment.onBackPressed()){
+                closeDrawer();
+            }
         }
-        Log.i(TAG,"<<<<<<<<<<<<initData()");
+
     }
 
     //打开侧拉

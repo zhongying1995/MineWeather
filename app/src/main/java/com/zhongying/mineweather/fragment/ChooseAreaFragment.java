@@ -107,6 +107,8 @@ public class ChooseAreaFragment extends BaseFragment implements View.OnClickList
         return view;
     }
 
+
+
     //初始化控件
     private void initView(View view){
         mBgPicture_iv = (ImageView) view.findViewById(R.id.background_picture_iv);
@@ -132,7 +134,7 @@ public class ChooseAreaFragment extends BaseFragment implements View.OnClickList
         String picture = SharedPreferencesManager
                 .getInstance().getString(Constant.SHARED_KEY_BACKGROUND);
         if(picture == null){
-            requestBgPituce();
+            requestBgPicture();
             return;
         }
         showBgPicture(picture);
@@ -332,7 +334,7 @@ public class ChooseAreaFragment extends BaseFragment implements View.OnClickList
 
 
     //向网络请求背景图
-    private void requestBgPituce(){
+    private void requestBgPicture(){
         String url = Constant.BACKGROUND_PICTURE_URL;
         HttpUtil.requestOkHttpUrl(url, new HttpCallback() {
             @Override
@@ -364,6 +366,22 @@ public class ChooseAreaFragment extends BaseFragment implements View.OnClickList
     //设置背景图
     private void showBgPicture(String picture){
         Glide.with(mActivity).load(picture).into(mBgPicture_iv);
+    }
+
+    //按下back键时
+    public boolean onBackPressed(){
+        switch (mCurrentLevel){
+            case LEVEL_COUNTY:
+                queryCitysData();
+                break;
+            case LEVEL_CITY:
+                back_iv.setVisibility(View.INVISIBLE);
+                queryProvincesData();
+                break;
+            default:
+                return false;
+        }
+        return true;
     }
 
 

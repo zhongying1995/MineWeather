@@ -103,7 +103,6 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     //当前天气对应的数据实体类
     private HeWeather mHeWeather;
 
-    private static int importent = 0;
 
     @Override
     public void onAttach(Context context) {
@@ -171,9 +170,6 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
     private void initData(){
         //初始化天气数据
         Log.i(TAG,"initData()>>>>>>>>>>>");
-
-        importent++;
-        Log.i(TAG,"importent:"+importent);
 
         String weatherText = SharedPreferencesManager
                 .getInstance().getString(Constant.SHARED_KEY_WEATHER_JSON);
@@ -286,13 +282,9 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         return true;
     }
 
-
     //请求网络数据
     public void requestWeather(final String weatherId){
         Log.i(TAG,"requestWeather()>>>>>>>>>>>>");
-
-        importent++;
-        Log.i(TAG,"importent:"+importent);
 
         if(weatherId == null){
             Log.i(TAG,"weatherId == null");
@@ -312,12 +304,14 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                         Toast.makeText(mActivity,"网络请求失败....",
                                 Toast.LENGTH_SHORT).show();
                         mSwipeRefreshLayout.setRefreshing(false);
+                        mActivity.setRequestCollectCity(false);
                     }
                 });
             }
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String text = response.body().string();
+
                 final HeWeather weather = Utilies.handleWeatherResponse(text);
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
@@ -327,6 +321,13 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                             SharedPreferencesManager.getInstance()
                                     .putString(Constant.SHARED_KEY_WEATHER_JSON,text);
                             mHeWeather = weather;//保存一个实体类对象
+
+                            //收藏该城市
+                            if(mActivity.getRequestCollectCity()){
+                                collectCity();
+                            }
+                            mActivity.setRequestCollectCity(false);
+
                             showWeatherInfo(weather);
                             mSwipeRefreshLayout.setRefreshing(false);
                         }else {
@@ -394,8 +395,6 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         mActivity.startService(it);
     }
 
-
-
     //组合风的天气信息
     private String dealWinInfo(Wind wind){
         String s = wind.windForce;
@@ -426,13 +425,10 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
-    //处理收藏城市图标的显示
+    //显示收藏城市图标
     private void showCollectCityIcon(){
         Log.i(TAG,"showCollectCityIcon()>>>>>>>>>>>>>>");
         Log.i(TAG,"showCollectCityIcon()----mWeatherId:"+mWeatherId);
-
-        importent++;
-        Log.i(TAG,"importent:"+importent);
 
         if(CityAdminItemManager.getInstance().isHadByWeatherId(mWeatherId)){
             //当前城市已被收藏
@@ -447,32 +443,17 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         Log.i(TAG,"<<<<<<<<<<<<<showCollectCityIcon()");
     }
 
-
     //反转当前收藏城市的操作，收藏改为不收藏，不收藏改为收藏
     public void reverseCollectCity(){
         Log.i(TAG,"reverseCollectCity()>>>>>>>>>>>>>>");
         if(mIsCollected){
             //取消收藏
             Log.i(TAG,"已经收藏当前的城市，请求取消收藏");
-            mIsCollected = false;
-            CityAdminItemManager.getInstance().delete(mWeatherId);
+            uncollectCity();
         }else {
             //请求收藏
             Log.i(TAG,"未收藏当前的城市，请求收藏");
-            mIsCollected = true;
-
-            CityAdminItem item = new CityAdminItem();
-            item.setCityName(mHeWeather.basic.cityName);
-            item.setAirQuality(mHeWeather.aqi.city.quality);
-            item.setCityWeatherId(mWeatherId);
-            item.setIconCode(mHeWeather.now.condition.code);
-            item.setTemperature(mHeWeather.now.temperature);
-            item.setMinTemperature(mHeWeather.dailyForecastList.get(0).temp.minTemp);
-            item.setMaxTemperature(mHeWeather.dailyForecastList.get(0).temp.maxTemp);
-            item.setWindDir(mHeWeather.dailyForecastList.get(0).wind.direction);
-            item.setWindForce(mHeWeather.dailyForecastList.get(0).wind.windForce);
-
-            CityAdminItemManager.getInstance().insert(item);
+            collectCity();
         }
         changeCollectCityIcon(mIsCollected);
         Log.i(TAG,"<<<<<<<<<<<<<<reverseCollectCity()");
@@ -485,6 +466,34 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         }else {
             mIsCollected_iv.setImageResource(R.mipmap.uncollect);
         }
+    }
+
+    //取消收藏城市
+    private void uncollectCity(){
+        if(!CityAdminItemManager.getInstance().isHadByWeatherId(mWeatherId)){
+            return;
+        }
+        mIsCollected = false;
+        CityAdminItemManager.getInstance().delete(mWeatherId);
+    }
+    //收藏城市
+    private void collectCity(){
+        if(CityAdminItemManager.getInstance().isHadByWeatherId(mWeatherId)){
+            return;
+        }
+        mIsCollected = true;
+        CityAdminItem item = new CityAdminItem();
+        item.setCityName(mHeWeather.basic.cityName);
+        item.setAirQuality(mHeWeather.aqi.city.quality);
+        item.setCityWeatherId(mWeatherId);
+        item.setIconCode(mHeWeather.now.condition.code);
+        item.setTemperature(mHeWeather.now.temperature);
+        item.setMinTemperature(mHeWeather.dailyForecastList.get(0).temp.minTemp);
+        item.setMaxTemperature(mHeWeather.dailyForecastList.get(0).temp.maxTemp);
+        item.setWindDir(mHeWeather.dailyForecastList.get(0).wind.direction);
+        item.setWindForce(mHeWeather.dailyForecastList.get(0).wind.windForce);
+
+        CityAdminItemManager.getInstance().insert(item);
     }
 
 }
