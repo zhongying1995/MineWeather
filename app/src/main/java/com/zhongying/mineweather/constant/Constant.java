@@ -30,7 +30,12 @@ public class Constant {
      */
     public static final String SHARED_KEY_WEATHER_JSON = "weather";
 
+    //是否关闭自动更新
+    public static final String SHARED_KEY_IS_CLOSE_AUTO_UPDATE = "isCloseAutoUpdate";
     //当前的自动更新间隔
     public static final String  SHARED_KEY_AUTO_UPDATE_TIME = "autoUpdateTime";
+
+    //是否关闭开机自启
+    public static final String SHARED_KEY_IS_CLOSE_BOOT_START ="isCloseBootStart";
 
 }

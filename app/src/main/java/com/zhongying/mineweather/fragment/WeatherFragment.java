@@ -20,6 +20,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
 import com.zhongying.mineweather.R;
 import com.zhongying.mineweather.activity.WeatherActivity;
 import com.zhongying.mineweather.constant.Constant;
@@ -96,12 +100,55 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         return mWeatherId;
     }
 
-
     //城市是否被收藏,true：被收藏
     private boolean mIsCollected;
 
     //当前天气对应的数据实体类
     private HeWeather mHeWeather;
+
+    //UShare监听器
+    private UMShareListener mShareListener = new UMShareListener() {
+        /**
+         * @descrption 分享开始的回调
+         * @param platform 平台类型
+         */
+        @Override
+        public void onStart(SHARE_MEDIA platform) {
+            Log.i(TAG,"UMShareListener --- onStart()");
+        }
+
+        /**
+         * @descrption 分享成功的回调
+         * @param platform 平台类型
+         */
+        @Override
+        public void onResult(SHARE_MEDIA platform) {
+            Log.i(TAG,"UMShareListener --- onResult()");
+            //Toast.makeText(mActivity,"成功了",Toast.LENGTH_LONG).show();
+        }
+
+        /**
+         * @descrption 分享失败的回调
+         * @param platform 平台类型
+         * @param t 错误原因
+         */
+        @Override
+        public void onError(SHARE_MEDIA platform, Throwable t) {
+            Log.i(TAG,"UMShareListener --- onError()");
+            Toast.makeText(mActivity,"失败"+t.getMessage(),Toast.LENGTH_LONG).show();
+        }
+
+        /**
+         * @descrption 分享取消的回调
+         * @param platform 平台类型
+         */
+        @Override
+        public void onCancel(SHARE_MEDIA platform) {
+            Log.i(TAG,"UMShareListener --- onCancel()");
+            //Toast.makeText(mActivity,"取消了",Toast.LENGTH_LONG).show();
+
+        }
+    };
 
 
     @Override
@@ -125,7 +172,6 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         return view;
     }
 
-
     private void initView(View view){
         //伪标题栏
         mChooseArea_iv = (ImageView) view.findViewById(R.id.to_choose_area_iv);
@@ -134,8 +180,10 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         mPlusArea_iv.setOnClickListener(this);
         mPlusArea_iv.setOnLongClickListener(this);
         mSetting_iv = (ImageView) view.findViewById(R.id.setting_iv);
+        mSetting_iv.bringToFront();
         mSetting_iv.setOnClickListener(this);
         mShare_iv = (ImageView) view.findViewById(R.id.share_iv);
+        mShare_iv.bringToFront();
         mShare_iv.setOnClickListener(this);
         //界面控制LinearLayout
         mWeatherControl_linear = (LinearLayout) view.findViewById(R.id.weather_control_linear);
@@ -214,9 +262,13 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
                 break;
             case R.id.setting_iv:
                 //跳转到设置界面
+                Log.i(TAG,"--------startSettingActivity()------");
+                mActivity.startSettingActivity();
+                closeWindow();
                 break;
             case R.id.share_iv:
                 //分享功能
+                shareWeather();
                 break;
             case R.id.is_collect_iv:
                 //收藏城市
@@ -226,22 +278,45 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         }
     }
 
+    @Override
+    public boolean onLongClick(View v) {
+        switch (v.getId()){
+            case R.id.plus_area_iv:
+                Log.i(TAG,"onLongClick()");
+                if(isHadLongClick){
+                    //收起两个imageView
+                    closeWindow();
+                }else {
+                    //展开两个imageView
+                    openWindow();
+                }
+                break;
+        }
+        return true;
+    }
+
     private void openWindow(){
-        mPlusArea_iv.setImageResource(R.mipmap.plus);
-        isHadLongClick = false;
+        Log.i(TAG,"openWindow()>>>>>>>>>>>");
+        mPlusArea_iv.setImageResource(R.mipmap.remove);
+        isHadLongClick = true;
+        mSetting_iv.setVisibility(View.VISIBLE);
+        mShare_iv.setVisibility(View.VISIBLE);
+        mIsCollected_iv.setVisibility(View.INVISIBLE);
 
         ObjectAnimator animatorPlus = ObjectAnimator.
-                ofFloat(mSetting_iv,"translationY",0,250f);
+                ofFloat(mSetting_iv,"translationY",0,200f);
         ObjectAnimator animatorShare = ObjectAnimator.
-                ofFloat(mShare_iv,"translationY",0,500f);
+                ofFloat(mShare_iv,"translationY",0,400f);
         AnimatorSet set = new AnimatorSet();
         set.playSequentially(animatorPlus,animatorShare);
         set.setInterpolator(new BounceInterpolator());
         set.setDuration(120);
         set.start();
+        Log.i(TAG,"<<<<<<<<<<<<<<<openWindow()");
     }
 
     private void closeWindow(){
+        Log.i(TAG,"closeWindow()>>>>>>>>>>>>>>>>");
         mPlusArea_iv.setImageResource(R.mipmap.plus);
         isHadLongClick = false;
 
@@ -249,37 +324,29 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         ObjectAnimator animatorPlus;
         ObjectAnimator animatorShare;
         animatorPlus = ObjectAnimator.
-                ofFloat(mSetting_iv,"translationY",250f,0);
+                ofFloat(mSetting_iv,"translationY",200f,0);
         animatorShare = ObjectAnimator.
-                ofFloat(mShare_iv,"translationY",500f,0);
+                ofFloat(mShare_iv,"translationY",400f,0);
         set.playTogether(animatorPlus,animatorShare);
         set.addListener(new AnimatorListenerAdapter() {
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                super.onAnimationCancel(animation);
+                Log.i(TAG,"onAnimationCancel()");
+            }
+
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                mSetting_iv.setVisibility(View.INVISIBLE);
-                mShare_iv.setVisibility(View.INVISIBLE);
+                Log.i(TAG,"onAnimationEnd()");
+                mSetting_iv.setVisibility(View.GONE);
+                mShare_iv.setVisibility(View.GONE);
+                mIsCollected_iv.setVisibility(View.VISIBLE);
             }
         });
-    }
-
-    @Override
-    public boolean onLongClick(View v) {
-        switch (v.getId()){
-            case R.id.plus_area_iv:
-                Log.i(TAG,"onLongClick()");
-
-                if(isHadLongClick){
-                //收起两个imageView
-                    closeWindow();
-                }else {
-                //展开两个imageView
-                    openWindow();
-                }
-
-                break;
-        }
-        return true;
+        set.start();
+        Log.i(TAG,"<<<<<<<<<<<<<<<<closeWindow()");
     }
 
     //请求网络数据
@@ -494,6 +561,29 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
         item.setWindForce(mHeWeather.dailyForecastList.get(0).wind.windForce);
 
         CityAdminItemManager.getInstance().insert(item);
+    }
+
+    //分享天气信息出去
+    private void shareWeather(){
+
+        UMImage image = new UMImage(mActivity,getWeatherIconId(mHeWeather.now.condition.code));
+        new ShareAction(mActivity)
+                .withMedia(image)
+                .withText(getShareWeatherString())
+                .setDisplayList(SHARE_MEDIA.QQ,SHARE_MEDIA.QZONE)
+                .setCallback(mShareListener)
+                .open();
+    }
+    /*
+        获取需要分享出去的天气信息
+        样式：我在天津，当下温度23°，空气质量良
+     */
+    private String getShareWeatherString(){
+        String s = "我在"+mCountyName_tv.getText().toString()
+                +"，当下温度"+mNowTemperature_tv.getText().toString()
+                +"，空气质量"+mAirQuality_tv.getText().toString();
+        Log.i(TAG,s);
+        return s;
     }
 
 }

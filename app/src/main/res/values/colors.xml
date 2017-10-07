@@ -5,5 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     <color name="weatherBgColor">#f4e3e9e8</color>
     <color name="weatherItemColor">#f5f0f0</color>
+    <color name="brown">#4d4c49</color>
 
 </resources>

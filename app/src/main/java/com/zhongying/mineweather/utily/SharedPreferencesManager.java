@@ -60,5 +60,17 @@ public class SharedPreferencesManager {
         return sp.getString(key,defaultString);
     }
 
+    //对boolean进行读写
+    public void putBoolean(String key,boolean value){
+        editor.putBoolean(key,value);
+        editor.commit();
+    }
+    public boolean getBoolean(String key){
+        return getBoolean(key,false);
+    }
+    public boolean getBoolean(String key,boolean defaultBoolean){
+        return sp.getBoolean(key,defaultBoolean);
+    }
+
 
 }

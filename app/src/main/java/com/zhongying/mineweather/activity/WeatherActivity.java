@@ -7,6 +7,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 
+import com.umeng.socialize.UMShareAPI;
 import com.zhongying.mineweather.R;
 import com.zhongying.mineweather.activity.base.BaseActivity;
 import com.zhongying.mineweather.fragment.ChooseAreaFragment;
@@ -61,6 +62,7 @@ public class WeatherActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.i(TAG,"onActivityResult()>>>>>>>>>>>>>>>>");
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
             case AdminCountyActivity.REQUEST_CODE_FOR_WEATHER_ID:
                 if(resultCode == RESULT_OK){
@@ -147,6 +149,9 @@ public class WeatherActivity extends BaseActivity {
         mWeatherFragment.requestWeather(weatherId);
     }
 
-
+    public void startSettingActivity(){
+        Log.i(TAG,"--------startSettingActivity()------");
+        SettingActivity.startSettingActivity(WeatherActivity.this);
+    }
 
 }

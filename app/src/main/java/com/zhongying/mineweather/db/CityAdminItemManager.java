@@ -102,7 +102,10 @@ public class CityAdminItemManager {
         if(city == null){
             return;
         }
-        city.save();
+        int rows = city.updateAll("cityWeatherId = ?",city.getCityWeatherId());
+        if(rows == 0){
+            city.save();
+        }
     }
 
 }
