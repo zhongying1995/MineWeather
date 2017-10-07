@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.zhongying.mineweather.activity.WeatherActivity;
+import com.zhongying.mineweather.activity.MainActivity;
 import com.zhongying.mineweather.constant.Constant;
 import com.zhongying.mineweather.service.AutoUpdateService;
 import com.zhongying.mineweather.utily.SharedPreferencesManager;
@@ -29,8 +29,10 @@ public class BootStartReceiver extends BroadcastReceiver {
         //开机自启
         if(!SharedPreferencesManager.getInstance()
                 .getBoolean(Constant.SHARED_KEY_IS_CLOSE_BOOT_START)){
-            Intent it = new Intent(context, WeatherActivity.class);
+            Intent it = new Intent(context, MainActivity.class);
+            it.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(it);
+            
         }
     }
 }
