@@ -23,7 +23,6 @@ import android.widget.Toast;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
-import com.umeng.socialize.media.UMImage;
 import com.zhongying.mineweather.R;
 import com.zhongying.mineweather.activity.WeatherActivity;
 import com.zhongying.mineweather.constant.Constant;
@@ -565,12 +564,10 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
 
     //分享天气信息出去
     private void shareWeather(){
-
-        UMImage image = new UMImage(mActivity,getWeatherIconId(mHeWeather.now.condition.code));
+        //UMImage image = new UMImage(mActivity,getWeatherIconId(mHeWeather.now.condition.code));
         new ShareAction(mActivity)
-                .withMedia(image)
                 .withText(getShareWeatherString())
-                .setDisplayList(SHARE_MEDIA.QQ,SHARE_MEDIA.QZONE)
+                .setDisplayList(SHARE_MEDIA.QZONE)
                 .setCallback(mShareListener)
                 .open();
     }
