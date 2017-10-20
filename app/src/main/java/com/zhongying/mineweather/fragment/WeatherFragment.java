@@ -434,12 +434,26 @@ public class WeatherFragment extends BaseFragment implements View.OnClickListene
 
         //3天
         mDays_linearLayout.removeAllViews();
+        int count = 0;
         for(DailyForecast forecast:weather.dailyForecastList){
             View view = LayoutInflater.from(mActivity).inflate(R.layout.item_days_layou,mDays_linearLayout,false);
+            TextView date_tv = (TextView) view.findViewById(R.id.days_today_tv);
             ImageView condIcon = (ImageView) view.findViewById(R.id.days_cond_iv);
             TextView win_tv = (TextView) view.findViewById(R.id.days_win_tv);
             TextView sunrise = (TextView) view.findViewById(R.id.days_sunrise_tv);
             TextView sundown = (TextView) view.findViewById(R.id.days_sundown_tv);
+            switch (count){
+                case 0:
+                    date_tv.setText("今天");
+                    break;
+                case 1:
+                    date_tv.setText("明天");
+                    break;
+                case 2:
+                    date_tv.setText("后天");
+                    break;
+            }
+            count++;
             condIcon.setImageResource(getWeatherIconId(forecast.condition.code));
             win_tv.setText(dealWinInfo(forecast.wind));
             sunrise.setText(forecast.astronomy.sunrise);

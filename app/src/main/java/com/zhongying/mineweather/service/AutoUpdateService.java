@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.text.TextUtils;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.zhongying.mineweather.constant.Constant;
 import com.zhongying.mineweather.db.CityAdminItem;
@@ -38,7 +40,8 @@ public class AutoUpdateService extends Service {
         updateCurrentWeather();
         updateColletcedCityWeather();
         timingAwaken();
-
+        Log.i("更新服务","现在开启自动更新");
+        Toast.makeText(this,"现在开启自动更新",Toast.LENGTH_SHORT).show();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -119,7 +122,8 @@ public class AutoUpdateService extends Service {
         int intervalTime;
         switch (hour){
             case 0:
-                intervalTime = 60 *60 *1000 /2;
+                //intervalTime = 60 *60 *1000 /2;
+                intervalTime = 5 *60 *1000 ;
                 break;
             case 1:
                 intervalTime =  60 *60 *1000 ;
